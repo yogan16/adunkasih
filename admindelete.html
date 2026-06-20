@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pentadbir Sistem - Padam Pengguna</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Check if the admin's email is stored in localStorage
+    if (!localStorage.getItem("userEmail")) {
+      alert("Sila log masuk sebagai Pentadbir.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <style>
+    /* ====== GLOBAL RESET ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to right, #f9f9f9, #fefefe);
+      overflow: hidden;
+    }
+    /* ====== HEADER (TOP BLACK BAR) ====== */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: black;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      font-family: 'Times New Roman', serif;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-left img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    .header-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-links a:hover {
+      background: white;
+      color: #2c1e3c;
+      border-radius: 15px;
+      padding: 10px 20px;
+    }
+    .logout-btn {
+      background: #bc0a0f;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .logout-btn:hover {
+      background: grey !important;
+      color: white !important;
+    }
+    .logout-btn::before {
+      content: "";
+      display: inline-block;
+      background: url('images/logout.png') no-repeat center center;
+      background-size: contain;
+      width: 25px;
+      height: 25px;
+      margin-right: 8px;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-wrap: wrap;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: black;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        margin: 10px 0;
+        padding: 10px 20px;
+        width: 50%;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+    /* ====== SIDEBAR + MAIN WRAPPER ====== */
+    .admin-wrapper {
+      display: flex;
+      height: 100vh;
+      margin-top: 60px;
+    }
+    /* ====== SIDEBAR ====== */
+    .sidebar {
+      width: 220px;
+      background: #454545;
+      color: #fff;
+      padding: 20px 0;
+      border-right: 2px solid #ccc;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .admin-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .admin-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ddd;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .admin-avatar img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+    .admin-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .sidebar-menu {
+      width: 100%;
+      list-style: none;
+      padding: 0 10px;
+    }
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-left: 4px solid transparent;
+      transition: background 0.3s, border-left 0.3s;
+      font-size: 16px;
+    }
+    .sidebar-menu a:hover {
+      background: #bc0a0f;
+      color: white;
+      border-left: 4px solid #ccc;
+    }
+    .sidebar-menu a img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+    }
+    .sidebar-divider {
+      width: 150%;
+      border-top: 3px solid #ccc;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+    /* ====== MAIN CONTENT ====== */
+    .main-content {
+      flex: 1;
+      padding: 20px 40px;
+      background: linear-gradient(to right, #fff, #f2f5f9);
+      position: relative;
+      overflow-y: auto;
+    }
+    .welcome-text {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .welcome-text img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+    .page-title {
+      margin-top: 35px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    .sub-heading {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #333;
+      margin-top: 25px;
+    }
+    .dotted-line {
+      width: 100%;
+      border-top: 2px dotted #999;
+      margin: 35px 0;
+    }
+    /* ====== USER ENTRY DISPLAY ====== */
+    .user-entry {
+      background: #fdfdfd;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .user-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+    .user-info span {
+      font-weight: 600;
+    }
+    .user-info input {
+      border: none;
+      background: transparent;
+      font-weight: 500;
+      color: #333;
+      width: auto;
+    }
+    .user-info input:disabled {
+      color: #333;
+      cursor: default;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .delete-btn img {
+      width: 38px;
+      height: 34px;
+    }
+    /* ====== CUSTOM CONFIRMATION MODAL ====== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: #333;
+    }
+    .modal-img img {
+      width: 60px;
+      margin-bottom: 10px;
+    }
+    .modal-message {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 15px 0;
+      color: #333;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .modal-cancel,
+    .modal-confirm {
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 20px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .modal-cancel {
+      background: grey;
+      color: #fff;
+    }
+    .modal-cancel:hover {
+      background: #666;
+    }
+    .modal-confirm {
+      background: #bc0a0f;
+      color: #fff;
+    }
+    .modal-confirm:hover {
+      background: #333;
+    }
+    /* ====== FOOTER ====== */
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 14px;
+      z-index: 999;
+    }
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 768px) {
+      .admin-wrapper {
+        flex-direction: column;
+        height: auto;
+        margin-top: 110px;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #ccc;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .main-content {
+        padding: 10px 20px;
+      }
+      .user-info {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+      }
+      .modal-content {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="admindashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pentadbir">
+        </div>
+        <div class="admin-name">Pentadbir Sistem</div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#"><img src="images/menu-user.png" alt="">Urus Pengguna</a></li>
+        <li style="margin-left: 35px;">
+          <ul>
+            <li><a href="admindashboard.html"><img src="images/add-icon.png" alt="">Tambah</a></li>
+            <li><a href="adminedit.html"><img src="images/edit-icon.png" alt="">Kemaskini</a></li>
+            <li><a href="admindelete.html"><img src="images/delete-icon.png" alt="">Padam</a></li>
+          </ul>
+        </li>
+        <li><a href="adminfeedback.html"><img src="images/menu-feedback.png" alt="">Urus Maklum Balas</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span>Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- Page Title -->
+      <div class="page-title">Padam Pengguna</div>
+
+      <!-- Pegawai Kebajikan Section -->
+      <div class="sub-heading">Pegawai Kebajikan :</div>
+      <div id="pegawaiContainer" style="margin-left: 100px; margin-right: 100px;"></div>
+
+      <!-- Dotted line -->
+      <div class="dotted-line"></div>
+
+      <!-- Wakil ADUN Section -->
+      <div class="sub-heading">Wakil ADUN :</div>
+      <div id="adunContainer" style="margin-left: 100px; margin-right: 100px;"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- ====== CUSTOM CONFIRMATION MODAL ====== -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeDeleteModal()">&times;</span>
+      <div class="modal-img">
+        <img src="images/messagebox.png" alt="Warning">
+      </div>
+      <div class="modal-message">
+        Adakah anda pasti mahu memadam pengguna ini?
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-cancel" onclick="closeDeleteModal()">Batal</button>
+        <button class="modal-confirm" onclick="confirmDelete()">Padam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="logout.js"></script>
+  <script src="firebaseConfig.js"></script>
+
+  <script>
+    // Toggle nav for mobile
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelector(".nav-links");
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function () {
+          navLinks.classList.toggle("active");
+        });
+      }
+    });
+
+    var database = firebase.database();
+
+    // Store which user we intend to delete
+    let deleteUserType = null;
+    let deleteUserKey = null;
+
+    // On page load, fetch Pegawai & Wakil ADUN
+    window.onload = function() {
+      loadPegawaiKebajikan();
+      loadWakilAdun();
+    };
+
+    // Load Pegawai Kebajikan
+    function loadPegawaiKebajikan() {
+      const pegawaiContainer = document.getElementById("pegawaiContainer");
+      pegawaiContainer.innerHTML = "";
+
+      database.ref("Users/pegawai_kebajikan").once("value", snapshot => {
+        let index = 1;
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          const entryDiv = document.createElement("div");
+          entryDiv.className = "user-entry";
+
+          const userInfo = document.createElement("div");
+          userInfo.className = "user-info";
+
+          const numberSpan = document.createElement("span");
+          numberSpan.textContent = index + ". ";
+          userInfo.appendChild(numberSpan);
+
+          // Email label + disabled input
+          const emailLabel = document.createElement("span");
+          emailLabel.textContent = "Email Pengguna : ";
+          userInfo.appendChild(emailLabel);
+
+          const emailInput = document.createElement("input");
+          emailInput.type = "text";
+          emailInput.value = data.email || "";
+          emailInput.disabled = true;
+          userInfo.appendChild(emailInput);
+
+          // NEW: Username label + disabled input
+          const usernameLabel = document.createElement("span");
+          usernameLabel.textContent = "ADUN : ";
+          userInfo.appendChild(usernameLabel);
+
+          const usernameInput = document.createElement("input");
+          usernameInput.type = "text";
+          usernameInput.value = data.username || "";
+          usernameInput.disabled = true;
+          userInfo.appendChild(usernameInput);
+
+          // Password label + disabled input
+          const pwdLabel = document.createElement("span");
+          pwdLabel.textContent = "Password : ";
+          userInfo.appendChild(pwdLabel);
+
+          const pwdInput = document.createElement("input");
+          pwdInput.type = "text";
+          pwdInput.value = data.password || "";
+          pwdInput.disabled = true;
+          userInfo.appendChild(pwdInput);
+
+          entryDiv.appendChild(userInfo);
+
+          // Delete button
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "delete-btn";
+          deleteButton.innerHTML = '<img src="images/delete.png" alt="Delete" style="width: 38px; height: 34px;">';
+          deleteButton.onclick = () => openDeleteModal("pegawai", key);
+          entryDiv.appendChild(deleteButton);
+
+          pegawaiContainer.appendChild(entryDiv);
+          index++;
+        });
+      });
+    }
+
+    // Load Wakil ADUN
+    function loadWakilAdun() {
+      const adunContainer = document.getElementById("adunContainer");
+      adunContainer.innerHTML = "";
+
+      database.ref("Users/wakil_adun").once("value", snapshot => {
+        let index = 1;
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          const entryDiv = document.createElement("div");
+          entryDiv.className = "user-entry";
+
+          const userInfo = document.createElement("div");
+          userInfo.className = "user-info";
+
+          const numberSpan = document.createElement("span");
+          numberSpan.textContent = index + ". ";
+          userInfo.appendChild(numberSpan);
+
+          // Email label + disabled input
+          const emailLabel = document.createElement("span");
+          emailLabel.textContent = "Email : ";
+          userInfo.appendChild(emailLabel);
+
+          const emailInput = document.createElement("input");
+          emailInput.type = "text";
+          emailInput.value = data.email || "";
+          emailInput.disabled = true;
+          userInfo.appendChild(emailInput);
+
+          // Username label + disabled input
+          const usernameLabel = document.createElement("span");
+          usernameLabel.textContent = "ADUN : ";
+          userInfo.appendChild(usernameLabel);
+
+          const usernameInput = document.createElement("input");
+          usernameInput.type = "text";
+          usernameInput.value = data.username || "";
+          usernameInput.disabled = true;
+          userInfo.appendChild(usernameInput);
+
+          // Password label + disabled input
+          const pwdLabel = document.createElement("span");
+          pwdLabel.textContent = "Password : ";
+          userInfo.appendChild(pwdLabel);
+
+          const pwdInput = document.createElement("input");
+          pwdInput.type = "text";
+          pwdInput.value = data.password || "";
+          pwdInput.disabled = true;
+          userInfo.appendChild(pwdInput);
+
+          entryDiv.appendChild(userInfo);
+
+          // Delete button
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "delete-btn";
+          deleteButton.innerHTML = '<img src="images/delete.png" alt="Delete" style="width: 38px; height: 34px;">';
+          deleteButton.onclick = () => openDeleteModal("adun", key);
+          entryDiv.appendChild(deleteButton);
+
+          adunContainer.appendChild(entryDiv);
+          index++;
+        });
+      });
+    }
+
+    // Open the custom modal for deleting
+    function openDeleteModal(userType, key) {
+      deleteUserType = userType;
+      deleteUserKey = key;
+      document.getElementById("deleteModal").style.display = "flex";
+    }
+
+    // Close the modal
+    function closeDeleteModal() {
+      document.getElementById("deleteModal").style.display = "none";
+    }
+
+    // Confirm delete: remove record from Firebase
+    function confirmDelete() {
+      if (!deleteUserType || !deleteUserKey) {
+        closeDeleteModal();
+        return;
+      }
+
+      let refPath = deleteUserType === "pegawai" 
+        ? "Users/pegawai_kebajikan/" 
+        : "Users/wakil_adun/";
+
+      database.ref(refPath + deleteUserKey)
+        .remove()
+        .then(() => {
+          alert("Pengguna berjaya dipadam.");
+          closeDeleteModal();
+          if (deleteUserType === "pegawai") {
+            loadPegawaiKebajikan();
+          } else {
+            loadWakilAdun();
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
+          alert("Ralat! Tidak dapat memadam pengguna.");
+          closeDeleteModal();
+        });
+    }
+  </script>
+</body>
+</html>

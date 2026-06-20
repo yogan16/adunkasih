@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pegawai Kebajikan - Urus Maklumat Kebajikan</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="css/maklumat.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="pegawaiDashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pegawai Kebajikan">
+        </div>
+        <div class="admin-name">
+          Pegawai Kebajikan<br>
+          <span id="pegawaiUsername" style="font-size:14px; font-weight:normal;"></span>
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="pegawaiDashboard.html"><img src="images/application.png" alt="">Senarai Permohonan</a>
+          <li style="margin-left:35px;"><ul>
+            <li><a href="pegawaiPending.html"><img src="images/proses.png" alt="Proses">Proses</a></li>
+            <li><a href="pegawaiLulus.html"><img src="images/lulus.png" alt="Lulus">Lulus</a></li>
+            <li><a href="pegawaiTolak.html"><img src="images/tolak.png" alt="Ditolak">Ditolak</a></li>
+            <li><a href="pegawaiDiagih.html"><img src="images/agih.png" alt="Diagihkan">Diagihkan</a></li>
+          </ul></li>
+        </li>
+        <li><a href="pegawaiMaklumat.html"><img src="images/menu-kebajikan.png" alt="maklumat">Urus Maklumat Kebajikan</a></li>
+        <li><a href="pegawaiUrus.html"><img src="images/menu-elderly.png" alt="UrusData">Urus Data Warganegara</a></li>
+        <li><a href="pegawaiPengumuman.html"><img src="images/menu-announcement.png" alt="Pengumuman">Pengumuman</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- PAGE TITLE -->
+      <h2 class="page-title">Urus Maklumat Jenis Kebajikan</h2>
+
+      <!-- TABLE SECTION -->
+      <div class="table-container">
+        <table id="jenisBantuanTable">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Jenis Bantuan</th>
+              <th>Syarat Bantuan</th>
+              <th>Umur Kelayakan</th>
+              <th>Jumlah Agihan (RM)</th>
+              <th>Penerangan Bantuan</th>
+              <th>Tarikh Dikemaskini</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically generated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dotted-line"></div>
+
+      <!-- ADD NEW JENIS BANTUAN SECTION -->
+      <div class="sub-heading">Tambah Jenis Kebajikan Baru :</div>
+      <div class="add-form">
+        <div class="form-left">
+          <div class="input-row">
+            <label>Nama Jenis Bantuan :</label>
+            <input type="text" id="newJenisBantuan" placeholder="Contoh: Bantuan Makanan">
+          </div>
+          <div class="input-row">
+            <label>Syarat Bantuan :</label>
+            <input type="text" id="newSyaratBantuan" placeholder="Contoh: Wajib Muat Naik Bukti Pendapatan">
+          </div>
+          <div class="input-row">
+            <label>Umur Kelayakan :</label>
+            <input type="text" id="newUmurKelayakan" placeholder="Contoh: 18-60 Tahun">
+          </div>
+          <div class="input-row">
+            <label>Jumlah Agihan (RM) :</label>
+            <input type="number" id="newJumlahAgihan" placeholder="Contoh: 500">
+          </div>
+          <div class="input-row">
+            <label>Penerangan Bantuan :</label>
+            <textarea id="newPenerangan" rows="3" placeholder="Contoh: Bantuan tunai kepada golongan B40 untuk membeli keperluan harian."></textarea>
+          </div>
+        </div>
+        <div class="form-right">
+          <button id="btnMuatNaik">MUAT NAIK</button>
+        </div>
+      </div>
+
+    </div> <!-- END MAIN CONTENT -->
+  </div> <!-- END WRAPPER -->
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- EDIT MODAL -->
+  <div class="modal" id="editModal">
+    <div class="modal-box">
+      <span class="modal-close" id="editModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/edit.png" alt="Edit Icon" class="modal-icon">
+        <h2 class="modal-title">KEMASKINI JENIS BANTUAN</h2>
+      </div>
+
+      <div class="modal-field">
+        <label>Nama Jenis Bantuan :</label>
+        <input type="text" id="editJenisBantuan">
+      </div>
+      <div class="modal-field">
+        <label>Syarat Bantuan :</label>
+        <input type="text" id="editSyaratBantuan">
+      </div>
+      <div class="modal-field">
+        <label>Umur Kelayakan :</label>
+        <input type="text" id="editUmurKelayakan">
+      </div>
+      <div class="modal-field">
+        <label>Jumlah Agihan (RM) :</label>
+        <input type="number" id="editJumlahAgihan">
+      </div>
+      <div class="modal-field">
+        <label>Penerangan Bantuan :</label>
+        <textarea id="editPenerangan" rows="3"></textarea>
+      </div>
+
+      <button class="modal-btn-lulus" id="btnEditSahkan">SIMPAN</button>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-box">
+      <span class="modal-close" id="deleteModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/warning.png" alt="Warning Icon" class="modal-icon">
+        <h2 class="modal-title">PADAM DATA</h2>
+      </div>
+      <p class="modal-status">
+        Adakah anda pasti untuk memadam data ini?
+      </p>
+      <button class="modal-btn-lulus" id="btnDeleteConfirm">PADAM</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="logout.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script>
+  // — 1) LOGIN CHECK —
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) {
+    alert("Sila log masuk sebagai Pegawai Kebajikan.");
+    window.location.href = "login.html";
+  }
+
+  // — 2) INIT FIREBASE DB & STATE KEYS —
+  const database = firebase.database();
+  let currentEditKey = null;
+  let currentDeleteKey = null;
+
+  // — 3) LOAD CURRENT PEGAWAI INFO —
+  database.ref("Users/pegawai_kebajikan").once("value")
+    .then(snapshot => {
+      let found = false;
+      snapshot.forEach(child => {
+        const d = child.val();
+        if (d.email === userEmail) {
+          found = true;
+          document.getElementById("pegawaiUsername").textContent = d.username || "";
+          document.getElementById("welcomeMsg").textContent =
+            "Selamat Datang ke ADUNKasih @ Kedah, " + (d.username || "Pegawai");
+        }
+      });
+      if (!found) alert("Rekod pegawai tidak dijumpai!");
+    })
+    .catch(err => console.error("Error loading pegawai info:", err));
+
+  // — 4) DEFAULTS TO SEED —
+  const defaultJenisKebajikan = {
+    pinjaman: {
+      jenisBantuan: "Pinjaman Peralatan",
+      syaratBantuan: "Keluarga B40 dan Muat Naik Pengesahan Doktor",
+      umurKelayakan: "18-60",
+      jumlahAgihan: "N/A",
+      penerangan: "Pinjaman peralatan perubatan seperti katil dan kerusi roda"
+    },
+    baikiRumah: {
+      jenisBantuan: "Bantuan Baiki Rumah",
+      syaratBantuan: "Keluarga B40 dan Muat Naik Document Kerosakan yang Disahkan",
+      umurKelayakan: "18-60",
+      jumlahAgihan: "N/A",
+      penerangan: "Bantuan baiki kerosakan ringan hingga sederhana"
+    }
+  };
+
+  // Utility to format today as DD/MM/YYYY
+  function getToday() {
+    const now = new Date();
+    return (
+      String(now.getDate()).padStart(2,"0") + "/" +
+      String(now.getMonth()+1).padStart(2,"0") + "/" +
+      now.getFullYear()
+    );
+  }
+
+  // — 5) SEED MISSING DEFAULTS — then LOAD table
+  function seedAndLoad() {
+    const ref = database.ref("jenisKebajikan");
+    ref.once("value")
+      .then(snapshot => {
+        const writes = [];
+        Object.entries(defaultJenisKebajikan).forEach(([key, val]) => {
+          if (!snapshot.hasChild(key)) {
+            // only write missing ones
+            writes.push(
+              ref.child(key).set({
+                ...val,
+                tarikhKemaskini: getToday()
+              })
+            );
+          }
+        });
+        return Promise.all(writes);
+      })
+      .then(() => {
+        // now render table
+        loadJenisBantuan();
+      })
+      .catch(err => {
+        console.error("Seeding error:", err);
+        alert("Seeding error: " + err.message);
+      });
+  }
+
+  // — 6) RENDER TABLE —
+  function loadJenisBantuan() {
+    const tbody = document.querySelector("#jenisBantuanTable tbody");
+    tbody.innerHTML = "";
+    database.ref("jenisKebajikan").once("value", snap => {
+      let i = 0;
+      snap.forEach(child => {
+        i++;
+        const d = child.val();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i}</td>
+          <td>${d.jenisBantuan || ""}</td>
+          <td>${d.syaratBantuan || ""}</td>
+          <td>${d.umurKelayakan || ""}</td>
+          <td>${d.jumlahAgihan || ""}</td>
+          <td>${d.penerangan || ""}</td>
+          <td>${d.tarikhKemaskini || ""}</td>
+          <td class="tindakan-cell">
+            <img src="images/edit.png" class="action-icon" alt="Edit">
+            <img src="images/delete.png" class="action-icon" alt="Delete">
+          </td>`;
+        // Edit
+        tr.querySelector('.action-icon[alt="Edit"]').addEventListener("click", () => {
+          openEditModal(child.key, d);
+        });
+        // Delete
+        tr.querySelector('.action-icon[alt="Delete"]').addEventListener("click", () => {
+          openDeleteModal(child.key);
+        });
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  // — 7) ADD NEW ENTRY —
+  document.getElementById("btnMuatNaik").onclick = () => {
+    const jb = document.getElementById("newJenisBantuan").value.trim();
+    const sb = document.getElementById("newSyaratBantuan").value.trim();
+    const uk = document.getElementById("newUmurKelayakan").value.trim();
+    const ja = document.getElementById("newJumlahAgihan").value.trim();
+    const pn = document.getElementById("newPenerangan").value.trim();
+    if (!jb || !sb || !uk || !ja || !pn) {
+      return alert("Sila isi semua maklumat.");
+    }
+    database.ref("jenisKebajikan").push({
+      jenisBantuan: jb,
+      syaratBantuan: sb,
+      umurKelayakan: uk,
+      jumlahAgihan: ja,
+      penerangan: pn,
+      tarikhKemaskini: getToday()
+    }).then(() => {
+      alert("Berjaya ditambah!");
+      // clear form
+      document.querySelectorAll(
+        "#newJenisBantuan,#newSyaratBantuan,#newUmurKelayakan,#newJumlahAgihan,#newPenerangan"
+      ).forEach(el => el.value = "");
+      loadJenisBantuan();
+    });
+  };
+
+  // — 8) EDIT MODAL —
+  function openEditModal(key, data) {
+    currentEditKey = key;
+    document.getElementById("editJenisBantuan").value = data.jenisBantuan || "";
+    document.getElementById("editSyaratBantuan").value = data.syaratBantuan || "";
+    document.getElementById("editUmurKelayakan").value = data.umurKelayakan || "";
+    document.getElementById("editJumlahAgihan").value = data.jumlahAgihan || "";
+    document.getElementById("editPenerangan").value = data.penerangan || "";
+    document.getElementById("editModal").style.display = "flex";
+  }
+  document.getElementById("editModalClose").onclick = () => {
+    document.getElementById("editModal").style.display = "none";
+  };
+  document.getElementById("btnEditSahkan").onclick = () => {
+    const jb = document.getElementById("editJenisBantuan").value.trim();
+    const sb = document.getElementById("editSyaratBantuan").value.trim();
+    const uk = document.getElementById("editUmurKelayakan").value.trim();
+    const ja = document.getElementById("editJumlahAgihan").value.trim();
+    const pn = document.getElementById("editPenerangan").value.trim();
+    if (!jb || !sb || !uk || !ja || !pn) {
+      return alert("Sila isi semua medan.");
+    }
+    database.ref("jenisKebajikan/" + currentEditKey).update({
+      jenisBantuan: jb,
+      syaratBantuan: sb,
+      umurKelayakan: uk,
+      jumlahAgihan: ja,
+      penerangan: pn,
+      tarikhKemaskini: getToday()
+    }).then(() => {
+      alert("Berjaya dikemaskini!");
+      document.getElementById("editModal").style.display = "none";
+      loadJenisBantuan();
+    });
+  };
+
+  // — 9) DELETE MODAL —
+  function openDeleteModal(key) {
+    currentDeleteKey = key;
+    document.getElementById("deleteModal").style.display = "flex";
+  }
+  document.getElementById("deleteModalClose").onclick = () => {
+    document.getElementById("deleteModal").style.display = "none";
+  };
+  document.getElementById("btnDeleteConfirm").onclick = () => {
+    database.ref("jenisKebajikan/" + currentDeleteKey).remove().then(() => {
+      alert("Berjaya dipadam.");
+      document.getElementById("deleteModal").style.display = "none";
+      loadJenisBantuan();
+    });
+  };
+
+  // — 10) ON PAGE LOAD: seed defaults then load table —
+  window.addEventListener("load", seedAndLoad);
+</script>
+</body>
+</html>

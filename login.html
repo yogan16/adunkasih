@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Masuk - ADUNKASIH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/login.css">
+  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="images/logo1.png" alt="Logo Malaysia" height="40" width="40">
+      <img src="images/logo2.png" alt="Logo Kedah" height="40" width="40">
+      <div class="logo">ADUNKASIH</div>
+    </div>
+    <!-- Hamburger icon for mobile -->
+    <div class="menu-toggle">&#9776;</div>
+    <nav class="nav-links">
+      <a href="index.html">Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="generalDashboard.html">Maklumat Agihan</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a href="login.html" class="login-btn">Log masuk</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="login-content">
+      <div class="login-image">
+        <img src="images/login.png" alt="Login Image" height="180" width="180">
+      </div>
+      <div class="login-box">
+        <div class="login-form">
+          
+          <label for="idnumber">No. Kad Pengenalan</label>
+          <input type="text" id="idnumber" placeholder="Masukkan No. Kad Pengenalan">
+
+          <label for="password">Kata Laluan</label>
+          <input type="password" id="password" placeholder="Masukkan Kata Laluan">
+
+          <!-- ====== New: Show/Hide checkbox, centered ====== -->
+          <div class="show-hide-container">
+            <input type="checkbox" id="showHidePassword">
+            <label for="showHidePassword">Tunjuk/Sembunyi</label>
+          </div>
+          <!-- ============================================== -->
+
+          <button onclick="loginUser()">LOG MASUK</button>
+          <p>Tidak mempunyai akaun? <a href="register.html">Daftar Masuk</a></p>
+          <p><a href="forgetpassword.html">Lupa Kata Laluan?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <script>
+    const database = firebase.database();
+
+    async function loginUser() {
+      const identifier = document.getElementById('idnumber').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!identifier || !password) {
+        alert('Sila isi semua maklumat.');
+        return;
+      }
+
+      const isEmail = identifier.includes('@');
+
+      if (!isEmail) {
+        try {
+          const snapshot = await database.ref("Users/citizen")
+            .orderByChild("idnumber")
+            .equalTo(identifier)
+            .once("value");
+
+          if (snapshot.exists()) {
+            let loggedIn = false;
+            snapshot.forEach(child => {
+              const userData = child.val();
+              if (userData.password === password) {
+                localStorage.setItem("userRole", "citizen");
+                localStorage.setItem("userIC", userData.idnumber);
+                alert("Log masuk berjaya!");
+                window.location.href = "dashboard.html";
+                loggedIn = true;
+              }
+            });
+            if (!loggedIn) {
+              alert("Kata laluan tidak sah!");
+            }
+          } else {
+            alert("Akaun tidak ditemui.");
+          }
+        } catch (error) {
+          console.error("Ralat:", error);
+          alert("Ralat semasa log masuk.");
+        }
+      } else {
+        try {
+          // Check admin
+          const adminSnap = await database.ref("Users/admin")
+            .orderByChild("email")
+            .equalTo(identifier)
+            .once("value");
+          if (adminSnap.exists()) {
+            let loggedIn = false;
+            adminSnap.forEach(child => {
+              const userData = child.val();
+              if (userData.password === password) {
+                localStorage.setItem("userRole", "admin");
+                localStorage.setItem("userEmail", userData.email);
+                alert("Log masuk berjaya!");
+                window.location.href = "admindashboard.html";
+                loggedIn = true;
+              }
+            });
+            if (loggedIn) return;
+            else { alert("Kata laluan tidak sah!"); return; }
+          }
+          // Check pegawai_kebajikan
+          const pegawaiSnap = await database.ref("Users/pegawai_kebajikan")
+            .orderByChild("email")
+            .equalTo(identifier)
+            .once("value");
+          if (pegawaiSnap.exists()) {
+            let loggedIn = false;
+            pegawaiSnap.forEach(child => {
+              const userData = child.val();
+              if (userData.password === password) {
+                localStorage.setItem("userRole", "pegawai_kebajikan");
+                localStorage.setItem("userEmail", userData.email);
+                alert("Log masuk berjaya!");
+                window.location.href = "pegawaiDashboard.html";
+                loggedIn = true;
+              }
+            });
+            if (loggedIn) return;
+            else { alert("Kata laluan tidak sah!"); return; }
+          }
+          // Check wakil_adun
+          const wakilSnap = await database.ref("Users/wakil_adun")
+            .orderByChild("email")
+            .equalTo(identifier)
+            .once("value");
+          if (wakilSnap.exists()) {
+            let loggedIn = false;
+            wakilSnap.forEach(child => {
+              const userData = child.val();
+              if (userData.password === password) {
+                localStorage.setItem("userRole", "wakil_adun");
+                localStorage.setItem("userEmail", userData.email);
+                alert("Log masuk berjaya!");
+                window.location.href = "adundashboard.html";
+                loggedIn = true;
+              }
+            });
+            if (loggedIn) return;
+            else { alert("Kata laluan tidak sah!"); return; }
+          }
+          alert("Akaun tidak ditemui.");
+        } catch (error) {
+          console.error("Ralat:", error);
+          alert("Ralat semasa log masuk.");
+        }
+      }
+    }
+
+    // Toggle navigation menu on mobile devices
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelector(".nav-links");
+
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function () {
+          navLinks.classList.toggle("active");
+        });
+      }
+
+      // ===== New: Show/Hide password checkbox logic =====
+      const showHideCheckbox = document.getElementById('showHidePassword');
+      const passwordField = document.getElementById('password');
+      showHideCheckbox.addEventListener('change', function() {
+        passwordField.type = this.checked ? 'text' : 'password';
+      });
+      // ==================================================
+    });
+  </script>
+</body>
+</html>

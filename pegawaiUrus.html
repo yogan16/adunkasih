@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pegawai Kebajikan - Urus Data Warganegara</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="css/urus.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="pegawaiDashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pegawai Kebajikan">
+        </div>
+        <div class="admin-name">
+          Pegawai Kebajikan
+          <br>
+          <span id="pegawaiUsername" style="font-size:14px; font-weight:normal;"></span>
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="pegawaiDashboard.html"><img src="images/application.png" alt="">Senarai Permohonan</a>
+          <li style="margin-left:35px;"><ul>
+            <li><a href="pegawaiPending.html"><img src="images/proses.png" alt="Proses">Proses</a></li>
+            <li><a href="pegawaiLulus.html"><img src="images/lulus.png" alt="Lulus">Lulus</a></li>
+            <li><a href="pegawaiTolak.html"><img src="images/tolak.png" alt="Ditolak">Ditolak</a></li>
+            <li><a href="pegawaiDiagih.html"><img src="images/agih.png" alt="Diagihkan">Diagihkan</a></li>
+          </ul></li>
+        </li>
+        <li><a href="pegawaiMaklumat.html"><img src="images/menu-kebajikan.png" alt="maklumat">Urus Maklumat Kebajikan</a></li>
+        <li><a href="pegawaiUrus.html"><img src="images/menu-elderly.png" alt="UrusData">Urus Data Warganegara</a></li>
+        <li><a href="pegawaiPengumuman.html"><img src="images/menu-announcement.png" alt="Pengumuman">Pengumuman</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- TITLE + SEARCH BAR -->
+      <div class="title-search-container">
+        <h2 class="page-title">Urus Maklumat Warganegara yang Layak</h2>
+        <div class="search-bar-container">
+          <input type="text" id="searchInput" placeholder="CARI KAD PENGENALAN ATAU KAWASAN ADUN">
+        </div>
+        <img src="images/search.png" alt="Search Icon" class="search-icon">
+      </div>
+
+      <!-- TABLE SECTION -->
+      <div class="table-container">
+        <table id="citizenTable">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Nama Penuh</th>
+              <th>No Kad Pengenalan</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically generated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dotted-line"></div>
+
+      <!-- ADD NEW CITIZEN SECTION -->
+      <div class="sub-heading">Tambah Data Warganegara Baru :</div>
+      <div class="add-form-inline">
+        <!-- Nama Penuh -->
+        <label>Nama Penuh:</label>
+        <input type="text" id="namaPenuhInput" placeholder="Contoh: Ali Bin Abu">
+
+        <!-- IC -->
+        <label>No Kad Pengenalan:</label>
+        <input type="text" id="icInput" placeholder="Contoh: 990101-14-XXXX">
+
+        <!-- Umur -->
+        <label>Umur:</label>
+        <input type="text" id="umurInput" placeholder="Auto" readonly>
+
+        <!-- Jantina -->
+        <label>Jantina:</label>
+        <select id="jantinaInput">
+          <option value="">Pilih Jantina</option>
+          <option value="Lelaki">Lelaki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+
+        <!-- Program Kebajikan -->
+        <label>Program Kebajikan:</label>
+        <div class="checkbox-container-inline">
+          <label><input type="checkbox" id="jkmCheck" value="JKM">JKM</label>
+          <label><input type="checkbox" id="paduCheck" value="PADU">PADU</label>
+          <label><input type="checkbox" id="zakatCheck" value="ZAKAT">ZAKAT</label>
+        </div>
+
+        <!-- Kawasan ADUN -->
+        <label>Kawasan ADUN:</label>
+        <select id="adunInput">
+          <!-- List of ADUN options -->
+          <option value="">Sila pilih ADUN</option>
+          <option value="ADUN Ayer Hangat">ADUN Ayer Hangat</option>
+          <option value="ADUN Kuah">ADUN Kuah</option>
+          <option value="ADUN Kota Siputeh">ADUN Kota Siputeh</option>
+          <option value="ADUN Ayer Hitam">ADUN Ayer Hitam</option>
+          <option value="ADUN Bukit Kayu Hitam">ADUN Bukit Kayu Hitam</option>
+          <option value="ADUN Jitra">ADUN Jitra</option>
+          <option value="ADUN Kuala Nerang">ADUN Kuala Nerang</option>
+          <option value="ADUN Pedu">ADUN Pedu</option>
+          <option value="ADUN Bukit Lada">ADUN Bukit Lada</option>
+          <option value="ADUN Bukit Pinang">ADUN Bukit Pinang</option>
+          <option value="ADUN Derga">ADUN Derga</option>
+          <option value="ADUN Suka Menanti">ADUN Suka Menanti</option>
+          <option value="ADUN Kota Darul Aman">ADUN Kota Darul Aman</option>
+          <option value="ADUN Alor Mengkudu">ADUN Alor Mengkudu</option>
+          <option value="ADUN Anak Bukit">ADUN Anak Bukit</option>
+          <option value="ADUN Kubang Rotan">ADUN Kubang Rotan</option>
+          <option value="ADUN Pengkalan Kundor">ADUN Pengkalan Kundor</option>
+          <option value="ADUN Tokai">ADUN Tokai</option>
+          <option value="ADUN Sungai Tiang">ADUN Sungai Tiang</option>
+          <option value="ADUN Sungai Limau">ADUN Sungai Limau</option>
+          <option value="ADUN Gua Chempedak">ADUN Gua Chempedak</option>
+          <option value="ADUN Gurun">ADUN Gurun</option>
+          <option value="ADUN Belantek">ADUN Belantek</option>
+          <option value="ADUN Jeneri">ADUN Jeneri</option>
+          <option value="ADUN Bukit Selambau">ADUN Bukit Selambau</option>
+          <option value="ADUN Tanjong Dawai">ADUN Tanjong Dawai</option>
+          <option value="ADUN Pantai Merdeka">ADUN Pantai Merdeka</option>
+          <option value="ADUN Bakar Arang">ADUN Bakar Arang</option>
+          <option value="ADUN Sidam">ADUN Sidam</option>
+          <option value="ADUN Bayu">ADUN Bayu</option>
+          <option value="ADUN Kupang">ADUN Kupang</option>
+          <option value="ADUN Kuala Ketil">ADUN Kuala Ketil</option>
+          <option value="ADUN Merbau Pulas">ADUN Merbau Pulas</option>
+          <option value="ADUN Lunas">ADUN Lunas</option>
+          <option value="ADUN Kulim">ADUN Kulim</option>
+          <option value="ADUN Bandar Baharu">ADUN Bandar Baharu</option>
+        </select>
+
+        <!-- Button -->
+        <button id="btnMuatNaik">MUAT NAIK</button>
+      </div>
+    </div> <!-- END MAIN CONTENT -->
+  </div> <!-- END WRAPPER -->
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- ====== VIEW MODAL ====== -->
+  <div class="modal" id="viewModal">
+    <div class="modal-box">
+      <span class="modal-close" id="viewModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/profile.png" alt="View Icon" class="modal-icon">
+        <h2 class="modal-title">MAKLUMAT WARGANEGARA</h2>
+      </div>
+
+      <div class="modal-field">
+        <label>Nama Penuh:</label>
+        <span id="viewNamaPenuh"></span>
+      </div>
+      <div class="modal-field">
+        <label>No Kad Pengenalan:</label>
+        <span id="viewIC"></span>
+      </div>
+      <div class="modal-field">
+        <label>Umur:</label>
+        <span id="viewUmur"></span>
+      </div>
+      <div class="modal-field">
+        <label>Jantina:</label>
+        <span id="viewJantina"></span>
+      </div>
+      <div class="modal-field">
+        <label>Program Kebajikan:</label>
+        <span id="viewProgram"></span>
+      </div>
+      <div class="modal-field">
+        <label>Kawasan ADUN:</label>
+        <span id="viewAdun"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== EDIT MODAL ====== -->
+  <div class="modal" id="editModal">
+    <div class="modal-box">
+      <span class="modal-close" id="editModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/edit.png" alt="Edit Icon" class="modal-icon">
+        <h2 class="modal-title">KEMASKINI DATA WARGANEGARA</h2>
+      </div>
+
+      <div class="modal-field">
+        <label>Nama Penuh:</label>
+        <input type="text" id="editNamaPenuh">
+      </div>
+      <div class="modal-field">
+        <label>No Kad Pengenalan:</label>
+        <input type="text" id="editIC">
+      </div>
+      <div class="modal-field">
+        <label>Umur:</label>
+        <input type="text" id="editUmur" readonly>
+      </div>
+      <div class="modal-field">
+        <label>Jantina:</label>
+        <select id="editJantina">
+          <option value="">Pilih Jantina</option>
+          <option value="Lelaki">Lelaki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Program Kebajikan:</label>
+        <div class="checkbox-container-inline" style="justify-content:flex-start;">
+          <label><input type="checkbox" id="editJKM" value="JKM">JKM</label>
+          <label><input type="checkbox" id="editPADU" value="PADU">PADU</label>
+          <label><input type="checkbox" id="editZAKAT" value="ZAKAT">ZAKAT</label>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Kawasan ADUN:</label>
+        <select id="editAdun">
+          <!-- List of ADUN options -->
+          <option value="">Sila pilih ADUN</option>
+          <option value="ADUN Ayer Hangat">ADUN Ayer Hangat</option>
+          <option value="ADUN Kuah">ADUN Kuah</option>
+          <option value="ADUN Kota Siputeh">ADUN Kota Siputeh</option>
+          <option value="ADUN Ayer Hitam">ADUN Ayer Hitam</option>
+          <option value="ADUN Bukit Kayu Hitam">ADUN Bukit Kayu Hitam</option>
+          <option value="ADUN Jitra">ADUN Jitra</option>
+          <option value="ADUN Kuala Nerang">ADUN Kuala Nerang</option>
+          <option value="ADUN Pedu">ADUN Pedu</option>
+          <option value="ADUN Bukit Lada">ADUN Bukit Lada</option>
+          <option value="ADUN Bukit Pinang">ADUN Bukit Pinang</option>
+          <option value="ADUN Derga">ADUN Derga</option>
+          <option value="ADUN Suka Menanti">ADUN Suka Menanti</option>
+          <option value="ADUN Kota Darul Aman">ADUN Kota Darul Aman</option>
+          <option value="ADUN Alor Mengkudu">ADUN Alor Mengkudu</option>
+          <option value="ADUN Anak Bukit">ADUN Anak Bukit</option>
+          <option value="ADUN Kubang Rotan">ADUN Kubang Rotan</option>
+          <option value="ADUN Pengkalan Kundor">ADUN Pengkalan Kundor</option>
+          <option value="ADUN Tokai">ADUN Tokai</option>
+          <option value="ADUN Sungai Tiang">ADUN Sungai Tiang</option>
+          <option value="ADUN Sungai Limau">ADUN Sungai Limau</option>
+          <option value="ADUN Gua Chempedak">ADUN Gua Chempedak</option>
+          <option value="ADUN Gurun">ADUN Gurun</option>
+          <option value="ADUN Belantek">ADUN Belantek</option>
+          <option value="ADUN Jeneri">ADUN Jeneri</option>
+          <option value="ADUN Bukit Selambau">ADUN Bukit Selambau</option>
+          <option value="ADUN Tanjong Dawai">ADUN Tanjong Dawai</option>
+          <option value="ADUN Pantai Merdeka">ADUN Pantai Merdeka</option>
+          <option value="ADUN Bakar Arang">ADUN Bakar Arang</option>
+          <option value="ADUN Sidam">ADUN Sidam</option>
+          <option value="ADUN Bayu">ADUN Bayu</option>
+          <option value="ADUN Kupang">ADUN Kupang</option>
+          <option value="ADUN Kuala Ketil">ADUN Kuala Ketil</option>
+          <option value="ADUN Merbau Pulas">ADUN Merbau Pulas</option>
+          <option value="ADUN Lunas">ADUN Lunas</option>
+          <option value="ADUN Kulim">ADUN Kulim</option>
+          <option value="ADUN Bandar Baharu">ADUN Bandar Baharu</option>
+        </select>
+      </div>
+
+      <button class="modal-btn-lulus" id="btnEditSahkan">SIMPAN</button>
+    </div>
+  </div>
+
+  <!-- ====== DELETE CONFIRMATION MODAL ====== -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-box">
+      <span class="modal-close" id="deleteModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/warning.png" alt="Warning Icon" class="modal-icon">
+        <h2 class="modal-title">PADAM DATA</h2>
+      </div>
+      <p class="modal-status">
+        Adakah anda pasti untuk memadam data ini?
+      </p>
+      <button class="modal-btn-lulus" id="btnDeleteConfirm">PADAM</button>
+    </div>
+  </div>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script src="logout.js"></script>
+  <!-- Firebase App (core SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <!-- Firebase Database -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- Firebase Storage (if needed) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="firebaseConfig.js"></script>
+
+  <script>
+    // 1. Check login
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai Pegawai Kebajikan.");
+      window.location.href = "login.html";
+    }
+
+    var database = firebase.database();
+    let currentADUN = "";
+    let currentEditKey = null;   // to store the key of the item we are editing
+    let currentDeleteKey = null; // to store the key of the item we are deleting
+
+    // 2. Retrieve pegawai username and set currentADUN
+    database.ref("Users/pegawai_kebajikan").once("value")
+      .then(snapshot => {
+        let foundUser = false;
+        snapshot.forEach(child => {
+          const data = child.val();
+          if (data.email === userEmail) {
+            foundUser = true;
+            currentADUN = data.username || "";
+            document.getElementById("pegawaiUsername").textContent = currentADUN;
+            document.getElementById("welcomeMsg").textContent =
+              "Selamat Datang ke ADUNKasih @ Kedah, " + (currentADUN || "Pegawai");
+          }
+        });
+        if (!foundUser) {
+          alert("Rekod pegawai tidak dijumpai dalam pangkalan data!");
+        }
+      })
+      .catch(error => {
+        console.error("Ralat ketika memuatkan data Pegawai:", error);
+      });
+
+    // 3. Load citizen data from Firebase
+    function loadCitizenData() {
+      const searchValue = document.getElementById("searchInput").value.trim().toLowerCase();
+      const tbody = document.getElementById("citizenTable").querySelector("tbody");
+      tbody.innerHTML = "";
+
+      database.ref("citizenData").once("value", snapshot => {
+        let counter = 0;
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          // If there's a searchValue, check if it matches either the IC or the Kawasan ADUN
+          if (searchValue) {
+            const icMatch = (data.kadPengenalan || "").toLowerCase().includes(searchValue);
+            const adunMatch = (data.kawasanADUN || "").toLowerCase().includes(searchValue);
+            if (!icMatch && !adunMatch) {
+              return; // skip this record if it doesn't match
+            }
+          }
+
+          counter++;
+          const row = document.createElement("tr");
+
+          // No.
+          const tdNo = document.createElement("td");
+          tdNo.textContent = counter;
+
+          // Nama Penuh
+          const tdNama = document.createElement("td");
+          tdNama.textContent = data.namaPenuh || "";
+
+          // No Kad Pengenalan
+          const tdIC = document.createElement("td");
+          tdIC.textContent = data.kadPengenalan || "";
+
+          // Tindakan
+          const tdTindakan = document.createElement("td");
+          tdTindakan.className = "tindakan-cell";
+
+          // View icon
+          const viewIcon = document.createElement("img");
+          viewIcon.src = "images/view.png";
+          viewIcon.alt = "View";
+          viewIcon.className = "action-icon";
+          viewIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openViewModal(key, data);
+          });
+
+          // Edit icon
+          const editIcon = document.createElement("img");
+          editIcon.src = "images/edit.png";
+          editIcon.alt = "Edit";
+          editIcon.className = "action-icon";
+          editIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openEditModal(key, data);
+          });
+
+          // Delete icon
+          const deleteIcon = document.createElement("img");
+          deleteIcon.src = "images/delete.png";
+          deleteIcon.alt = "Delete";
+          deleteIcon.className = "action-icon";
+          deleteIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openDeleteModal(key);
+          });
+
+          tdTindakan.appendChild(viewIcon);
+          tdTindakan.appendChild(editIcon);
+          tdTindakan.appendChild(deleteIcon);
+
+          // Append cells to row
+          row.appendChild(tdNo);
+          row.appendChild(tdNama);
+          row.appendChild(tdIC);
+          row.appendChild(tdTindakan);
+
+          // Append row to table body
+          tbody.appendChild(row);
+        });
+      });
+    }
+
+    // 4. Calculate age from IC
+    function calculateAge(icNumber) {
+      // Assume format YYMMDD-XX-XXXX or at least first 6 digits are YYMMDD
+      if (!icNumber || icNumber.length < 6) return "";
+      const yy = parseInt(icNumber.substring(0, 2));
+      const mm = parseInt(icNumber.substring(2, 4));
+      const dd = parseInt(icNumber.substring(4, 6));
+
+      let fullYear = yy >= 50 ? 1900 + yy : 2000 + yy;
+      let birthDate = new Date(fullYear, mm - 1, dd);
+      if (isNaN(birthDate.getTime())) {
+        return "";
+      }
+      let today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      let m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
+    // 5. Add new citizen
+    document.getElementById("btnMuatNaik").onclick = function() {
+      const namaPenuh = document.getElementById("namaPenuhInput").value.trim();
+      const kadPengenalan = document.getElementById("icInput").value.trim();
+      const umur = calculateAge(kadPengenalan);
+      const jantina = document.getElementById("jantinaInput").value;
+
+      const jkmCheck = document.getElementById("jkmCheck").checked;
+      const paduCheck = document.getElementById("paduCheck").checked;
+      const zakatCheck = document.getElementById("zakatCheck").checked;
+
+      // Combine program kebajikan in a string
+      let programList = [];
+      if (jkmCheck) programList.push("JKM");
+      if (paduCheck) programList.push("PADU");
+      if (zakatCheck) programList.push("ZAKAT");
+      const programKebajikan = programList.join(", ");
+
+      const kawasanADUN = document.getElementById("adunInput").value;
+
+      if (!namaPenuh || !kadPengenalan || !jantina || !kawasanADUN) {
+        alert("Sila isi semua maklumat yang diperlukan (Nama, IC, Jantina, Kawasan ADUN).");
+        return;
+      }
+
+      document.getElementById("umurInput").value = umur; // Display in form as well
+
+      // Save to Firebase
+      const newRef = database.ref("citizenData").push();
+      newRef.set({
+        namaPenuh: namaPenuh,
+        kadPengenalan: kadPengenalan,
+        umur: umur,
+        jantina: jantina,
+        programKebajikan: programKebajikan,
+        kawasanADUN: kawasanADUN
+      })
+      .then(() => {
+        alert("Data Warganegara berjaya ditambah!");
+        // Clear fields
+        document.getElementById("namaPenuhInput").value = "";
+        document.getElementById("icInput").value = "";
+        document.getElementById("umurInput").value = "";
+        document.getElementById("jantinaInput").value = "";
+        document.getElementById("jkmCheck").checked = false;
+        document.getElementById("paduCheck").checked = false;
+        document.getElementById("zakatCheck").checked = false;
+        document.getElementById("adunInput").value = "";
+        loadCitizenData();
+      })
+      .catch(error => {
+        console.error("Ralat semasa menambah data:", error);
+      });
+    };
+
+    // Auto-calculate umur on IC blur
+    document.getElementById("icInput").addEventListener("blur", function() {
+      document.getElementById("umurInput").value = calculateAge(this.value.trim());
+    });
+
+    // 6. Open View Modal
+    function openViewModal(key, data) {
+      document.getElementById("viewNamaPenuh").textContent = data.namaPenuh || "";
+      document.getElementById("viewIC").textContent = data.kadPengenalan || "";
+      document.getElementById("viewUmur").textContent = data.umur || "";
+      document.getElementById("viewJantina").textContent = data.jantina || "";
+      document.getElementById("viewProgram").textContent = data.programKebajikan || "";
+      document.getElementById("viewAdun").textContent = data.kawasanADUN || "";
+      document.getElementById("viewModal").style.display = "flex";
+    }
+    document.getElementById("viewModalClose").onclick = function() {
+      document.getElementById("viewModal").style.display = "none";
+    };
+
+    // 7. Open Edit Modal
+    function openEditModal(key, data) {
+      currentEditKey = key;
+      document.getElementById("editNamaPenuh").value = data.namaPenuh || "";
+      document.getElementById("editIC").value = data.kadPengenalan || "";
+      document.getElementById("editUmur").value = data.umur || "";
+      document.getElementById("editJantina").value = data.jantina || "";
+
+      // Reset checkboxes
+      document.getElementById("editJKM").checked = false;
+      document.getElementById("editPADU").checked = false;
+      document.getElementById("editZAKAT").checked = false;
+
+      if (data.programKebajikan) {
+        const programs = data.programKebajikan.split(",").map(p => p.trim());
+        if (programs.includes("JKM")) document.getElementById("editJKM").checked = true;
+        if (programs.includes("PADU")) document.getElementById("editPADU").checked = true;
+        if (programs.includes("ZAKAT")) document.getElementById("editZAKAT").checked = true;
+      }
+      document.getElementById("editAdun").value = data.kawasanADUN || "";
+
+      document.getElementById("editModal").style.display = "flex";
+    }
+    document.getElementById("editModalClose").onclick = function() {
+      document.getElementById("editModal").style.display = "none";
+    };
+
+    // 7.1 Confirm Edit
+    document.getElementById("btnEditSahkan").onclick = function() {
+      const updatedNama = document.getElementById("editNamaPenuh").value.trim();
+      const updatedIC = document.getElementById("editIC").value.trim();
+      const updatedUmur = calculateAge(updatedIC); // recalc umur
+      const updatedJantina = document.getElementById("editJantina").value;
+
+      const editJKM = document.getElementById("editJKM").checked;
+      const editPADU = document.getElementById("editPADU").checked;
+      const editZAKAT = document.getElementById("editZAKAT").checked;
+      let programList = [];
+      if (editJKM) programList.push("JKM");
+      if (editPADU) programList.push("PADU");
+      if (editZAKAT) programList.push("ZAKAT");
+      const updatedProgram = programList.join(", ");
+
+      const updatedAdun = document.getElementById("editAdun").value;
+
+      if (!updatedNama || !updatedIC || !updatedJantina || !updatedAdun) {
+        alert("Sila isi semua medan.");
+        return;
+      }
+
+      const updates = {
+        namaPenuh: updatedNama,
+        kadPengenalan: updatedIC,
+        umur: updatedUmur,
+        jantina: updatedJantina,
+        programKebajikan: updatedProgram,
+        kawasanADUN: updatedAdun
+      };
+
+      database.ref("citizenData/" + currentEditKey).update(updates)
+        .then(() => {
+          alert("Data berjaya dikemaskini!");
+          document.getElementById("editModal").style.display = "none";
+          loadCitizenData();
+        })
+        .catch(error => {
+          console.error("Ralat semasa mengemas kini data:", error);
+        });
+    };
+
+    // 8. Open Delete Modal
+    function openDeleteModal(key) {
+      currentDeleteKey = key;
+      document.getElementById("deleteModal").style.display = "flex";
+    }
+    document.getElementById("deleteModalClose").onclick = function() {
+      document.getElementById("deleteModal").style.display = "none";
+    };
+
+    // 8.1 Confirm Delete
+    document.getElementById("btnDeleteConfirm").onclick = function() {
+      if (!currentDeleteKey) return;
+      database.ref("citizenData/" + currentDeleteKey).remove()
+        .then(() => {
+          alert("Data berjaya dipadam.");
+          document.getElementById("deleteModal").style.display = "none";
+          loadCitizenData();
+        })
+        .catch(error => {
+          console.error("Ralat semasa memadam data:", error);
+        });
+    };
+
+    // 9. Search Listener
+    document.getElementById("searchInput").addEventListener("input", loadCitizenData);
+
+    // 10. On page load
+    window.onload = function() {
+      loadCitizenData();
+    };
+  </script>
+
+</body>
+</html>

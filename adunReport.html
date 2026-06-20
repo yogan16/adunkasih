@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADUN Dashboard - Laporan</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK (v8.x) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Your Firebase config -->
+  <script src="firebaseConfig.js"></script>
+
+  <!-- jsPDF + AutoTable for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.25/dist/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- External CSS for this page -->
+  <link rel="stylesheet" href="css/adunreport.css">
+</head>
+<body>
+  <!-- Auth check -->
+  <script>
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai ADUN.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo 1">
+      <img src="images/logo2.png" alt="Logo 2">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="adundashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Wakil ADUN">
+        </div>
+        <div class="admin-name" id="adunSidebarName">Loading...</div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="adundashboard.html"><img src="images/Graphs.png" alt=""> Graf Agihan</a></li>
+        <li><a href="adunPending.html"><img src="images/proses.png" alt="">Permohonan Proces</a></li>
+        <li><a href="maklumatPeruntukan.html"><img src="images/money.png" alt=""> Maklumat Peruntukan</a></li>
+        <li><a href="adunReport.html"><img src="images/report.png" alt=""> Laporan</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text" id="welcomeMsg">
+        Selamat Datang ke ADUNKasih @ Kedah
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <h2 class="page-title">Muat Turun Laporan Agihan</h2>
+
+      <!-- MONTHLY REPORT SECTION -->
+      <div class="report-section">
+        <h3>Laporan Penuh Agihan Bulanan</h3>
+        <label for="yearFilter">Tahun :</label>
+        <select id="yearFilter"></select>
+
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Laporan</th>
+              <th>Muat Turun</th>
+              <th>Saiz Fail</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyReportTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- CATEGORY REPORT SECTION -->
+      <div class="report-section">
+        <h3>Laporan Agihan Berdasarkan Kategori</h3>
+        <label for="kategoriFilter">Kategori :</label>
+        <select id="kategoriFilter">
+          <option value="">Pilih Kategori</option>
+        </select>
+
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Laporan</th>
+              <th>Muat Turun</th>
+              <th>Saiz Fail</th>
+            </tr>
+          </thead>
+          <tbody id="kategoriReportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <script src="logout.js"></script>
+
+  <script>
+    var db = firebase.database();
+    let currentAdunName = "ADUN";
+
+    const monthNames = [
+      "Januari","Februari","Mac","April","Mei","Jun",
+      "Julai","Ogos","September","Oktober","November","Disember"
+    ];
+    const BASE_SIZE_BYTES = 200*1024;
+    const RECORD_SIZE_BYTES = 10*1024;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1) Identify ADUN
+      const userEmail = localStorage.getItem("userEmail");
+      const wakilSnap = await db.ref("Users/wakil_adun")
+        .orderByChild("email")
+        .equalTo(userEmail)
+        .once("value");
+      if (wakilSnap.exists()) {
+        wakilSnap.forEach(c => {
+          if (c.val().username) currentAdunName = c.val().username;
+        });
+      }
+      document.getElementById("adunSidebarName").textContent = currentAdunName;
+      document.getElementById("welcomeMsg").firstChild.textContent =
+        "Selamat Datang ke ADUNKasih @ Kedah, " + currentAdunName;
+
+      // 2) Populate year dropdown
+      populateYearDropdown("yearFilter", 2025, 2030);
+
+      // 3) Populate kategori dropdown
+      const jenisSnap = await db.ref("jenisKebajikan").once("value");
+      const jenisData = jenisSnap.val() || {};
+      const kategoriSelect = document.getElementById("kategoriFilter");
+      Object.values(jenisData).forEach(item => {
+        if (item.jenisBantuan) {
+          const opt = document.createElement("option");
+          opt.value = item.jenisBantuan;
+          opt.textContent = item.jenisBantuan;
+          kategoriSelect.appendChild(opt);
+        }
+      });
+
+      // 4) Initial render & estimates
+      renderMonthlyTable();
+      await updateMonthlyEstimates();
+      kategoriSelect.addEventListener("change", async () => {
+        renderKategoriTable(kategoriSelect.value);
+        if (kategoriSelect.value) await updateKategoriEstimates(kategoriSelect.value);
+      });
+      document.getElementById("yearFilter")
+        .addEventListener("change", async () => {
+          renderMonthlyTable();
+          await updateMonthlyEstimates();
+        });
+    });
+
+    function populateYearDropdown(id, start, end) {
+      const select = document.getElementById(id);
+      for (let y = start; y <= end; y++) {
+        const o = document.createElement("option");
+        o.value = y; o.textContent = y;
+        select.appendChild(o);
+      }
+    }
+
+    function renderMonthlyTable() {
+      const tbody = document.getElementById("monthlyReportTableBody");
+      tbody.innerHTML = "";
+      monthNames.forEach((mn, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i+1}</td>
+          <td>
+            <img src="images/pdf.png" class="pdf-icon">
+            Bulan ${mn}
+          </td>
+          <td>
+            <button class="download-btn" onclick="downloadMonthlyReport(${i+1})">
+              <img src="images/download.png" class="download-icon">
+            </button>
+          </td>
+          <td id="monthly-size-${i+1}">-</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderKategoriTable(val) {
+      const tbody = document.getElementById("kategoriReportTableBody");
+      tbody.innerHTML = "";
+      if (!val) return;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>1</td>
+        <td>
+          <img src="images/pdf.png" class="pdf-icon">
+          Laporan Kategori: ${val}
+        </td>
+        <td>
+          <button class="download-btn" onclick="downloadKategoriReport('${val}')">
+            <img src="images/download.png" class="download-icon">
+          </button>
+        </td>
+        <td id="kategori-size">-</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function parseDateYearMonth(dateStr) {
+      if (!dateStr) return { year: null, month: null };
+      dateStr = dateStr.replace(/-/g, '/');
+      const parts = dateStr.split(' ');
+      const [d,m,y] = parts[0].split('/');
+      return { year: y, month: Number(m) };
+    }
+
+    async function updateMonthlyEstimates() {
+      const yearSel = document.getElementById("yearFilter").value;
+      const permSnap = await db.ref("permohonan").once("value");
+      const data = permSnap.val() || {};
+      for (let m = 1; m <= 12; m++) {
+        let count = 0, sumAmt = 0;
+        Object.values(data).forEach(p => {
+          if (p.pemohon?.adun !== currentAdunName) return;
+          const tsList = p.applicationStatusTimestamps;
+          if (!tsList) return;
+          const firstTs = tsList[Object.keys(tsList)[0]];
+          const { year, month } = parseDateYearMonth(firstTs);
+          if (String(year) !== yearSel || month !== m) return;
+          count++;
+          if (p.jumlahDiagihkan) sumAmt += Number(p.jumlahDiagihkan);
+        });
+        const sizeMB = ((BASE_SIZE_BYTES + count * RECORD_SIZE_BYTES)/(1024*1024)).toFixed(2) + " MB";
+        document.getElementById(`monthly-size-${m}`).textContent = sizeMB;
+        // store sumAmt for PDF
+        document.getElementById(`monthly-size-${m}`).dataset.sumAmt = sumAmt.toFixed(2);
+      }
+    }
+
+    async function updateKategoriEstimates(cat) {
+      const permSnap = await db.ref("permohonan").once("value");
+      const data = permSnap.val() || {};
+      let count = 0, sumAmt = 0;
+      Object.values(data).forEach(p => {
+        if (p.pemohon?.adun !== currentAdunName) return;
+        let jenis = "";
+        if (p.bantuan?.jenis) {
+          if (p.bantuan.jenis === "Lain-lain" && p.bantuan.lainLain) {
+            if (cat === "Lain-lain") jenis = "Lain-lain";
+          } else if (p.bantuan.jenis === cat) jenis = cat;
+        }
+        if (!jenis) return;
+        count++;
+        if (p.jumlahDiagihkan) sumAmt += Number(p.jumlahDiagihkan);
+      });
+      const sizeMB = ((BASE_SIZE_BYTES + count * RECORD_SIZE_BYTES)/(1024*1024)).toFixed(2) + " MB";
+      document.getElementById("kategori-size").textContent = sizeMB;
+      document.getElementById("kategori-size").dataset.sumAmt = sumAmt.toFixed(2);
+    }
+
+    async function downloadMonthlyReport(monthIndex) {
+      const yearSel = document.getElementById("yearFilter").value;
+      const mn = monthNames[monthIndex - 1] || "";
+      const permSnap = await db.ref("permohonan").once("value");
+      const data = permSnap.val() || {};
+      let rows = [], count = 0;
+      Object.values(data).forEach(p => {
+        if (p.pemohon?.adun !== currentAdunName) return;
+        const tsList = p.applicationStatusTimestamps;
+        if (!tsList) return;
+        const firstTs = tsList[Object.keys(tsList)[0]];
+        const { year, month } = parseDateYearMonth(firstTs);
+        if (String(year) !== yearSel || month !== monthIndex) return;
+        count++;
+        rows.push([
+          count,
+          p.pemohon.nama || "",
+          p.pemohon.noMykad || "",
+          p.pemohon.jantina || "",
+          p.pemohon.pendapatanKasar || "",
+          p.pemohon.adun || "",
+          p.bantuan?.jenis === "Lain-lain" && p.bantuan.lainLain
+            ? `Lain-lain (${p.bantuan.lainLain})`
+            : (p.bantuan?.jenis || ""),
+          p.applicationStatus || "",
+          p.jumlahDiagihkan != null ? p.jumlahDiagihkan : "N/A"
+        ]);
+      });
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      doc.setFontSize(14);
+      doc.text(`Laporan Agihan Bulanan – ${mn} ${yearSel}`, 40, 40);
+
+      doc.autoTable({
+        startY: 60,
+        head: [[
+          "No","Nama","No IC","Jantina","Pendapatan Kasar",
+          "ADUN","Jenis Bantuan","Status","Jumlah Agihan(RM)"
+        ]],
+        body: rows,
+        styles: { fontSize: 10, cellPadding: 5, overflow: "linebreak" },
+        headStyles: { fillColor: [100, 100, 100] },
+        margin: { left: 40, right: 40 }
+      });
+
+      doc.save(`Laporan_${mn}_${yearSel}.pdf`);
+    }
+
+    async function downloadKategoriReport(cat) {
+      const permSnap = await db.ref("permohonan").once("value");
+      const data = permSnap.val() || {};
+      let rows = [], count = 0;
+      Object.values(data).forEach(p => {
+        if (p.pemohon?.adun !== currentAdunName) return;
+        let jenis = "";
+        if (p.bantuan?.jenis) {
+          if (p.bantuan.jenis === "Lain-lain" && p.bantuan.lainLain) {
+            if (cat === "Lain-lain") jenis = "Lain-lain";
+          } else if (p.bantuan.jenis === cat) jenis = cat;
+        }
+        if (!jenis) return;
+        count++;
+        rows.push([
+          count,
+          p.pemohon.nama || "",
+          p.pemohon.noMykad || "",
+          p.pemohon.jantina || "",
+          p.pemohon.pendapatanKasar || "",
+          p.pemohon.adun || "",
+          jenis,
+          p.applicationStatus || "",
+          p.jumlahDiagihkan != null ? p.jumlahDiagihkan : "N/A"
+        ]);
+      });
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      doc.setFontSize(14);
+      doc.text(`Laporan Agihan Berdasarkan Kategori: ${cat}`, 40, 40);
+
+      doc.autoTable({
+        startY: 60,
+        head: [[
+          "No","Nama","No IC","Jantina","Pendapatan Kasar",
+          "ADUN","Jenis Bantuan","Status","Jumlah Agihan(RM)"
+        ]],
+        body: rows,
+        styles: { fontSize: 10, cellPadding: 5, overflow: "linebreak" },
+        headStyles: { fillColor: [100, 100, 100] },
+        margin: { left: 40, right: 40 }
+      });
+
+      doc.save(`Laporan_Kategori_${cat}.pdf`);
+    }
+  </script>
+</body>
+</html>

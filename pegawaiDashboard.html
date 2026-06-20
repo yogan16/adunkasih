@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pegawai Kebajikan Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="css/pegawaiDashboard.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="firebaseConfig.js"></script>
+</head>
+<body>
+  <!-- Auth check -->
+  <script>
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert('Sila log masuk sebagai Pegawai Kebajikan.');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="pegawaiDashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar"><img src="images/profile.png" alt="Pegawai Kebajikan"></div>
+        <div class="admin-name">
+          Pegawai Kebajikan<br>
+          <span id="pegawaiUsername" style="font-size:14px; font-weight:normal;"></span>
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="pegawaiDashboard.html"><img src="images/application.png" alt="">Senarai Permohonan</a>
+          <li style="margin-left:35px;"><ul>
+            <li><a href="pegawaiPending.html"><img src="images/proses.png" alt="Proses">Proses</a></li>
+            <li><a href="pegawaiLulus.html"><img src="images/lulus.png" alt="Lulus">Lulus</a></li>
+            <li><a href="pegawaiTolak.html"><img src="images/tolak.png" alt="Ditolak">Ditolak</a></li>
+            <li><a href="pegawaiDiagih.html"><img src="images/agih.png" alt="Diagihkan">Diagihkan</a></li>
+          </ul></li>
+        </li>
+        <li><a href="pegawaiMaklumat.html"><img src="images/menu-kebajikan.png" alt="maklumat">Urus Maklumat Kebajikan</a></li>
+        <li><a href="pegawaiUrus.html"><img src="images/menu-elderly.png" alt="UrusData">Urus Data Warganegara</a></li>
+        <li><a href="pegawaiPengumuman.html"><img src="images/menu-announcement.png" alt="Pengumuman">Pengumuman</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- Title + Button in one line -->
+      <div class="title-action-container">
+        <h2 class="page-title">Papan Pemuka Agihan Bantuan</h2>
+        <button id="gotoReportBtn" class="report-btn">
+          Muat Turun Laporan
+        </button>
+      </div>
+
+      <!-- 5 Status Boxes -->
+      <div class="stats-container">
+        <div class="stat-box" style="background: #00a878;">
+          <div class="stat-title">Jumlah yang Lulus</div>
+          <div class="stat-value" id="countLulus">0</div>
+        </div>
+        <div class="stat-box" style="background: #3b82f6;">
+          <div class="stat-title">Jumlah dalam Proses</div>
+          <div class="stat-value" id="countProses">0</div>
+        </div>
+        <div class="stat-box" style="background: #ef4444;">
+          <div class="stat-title">Jumlah yang Ditolak</div>
+          <div class="stat-value" id="countTolak">0</div>
+        </div>
+        <div class="stat-box" style="background: #8c04cf;">
+          <div class="stat-title">Jumlah yang Diagih</div>
+          <div class="stat-value" id="countAgih">0</div>
+        </div>
+        <div class="stat-box" style="background: #f59e0b;">
+          <div class="stat-title">Jumlah yang Mohon</div>
+          <div class="stat-value" id="countMohon">0</div>
+        </div>
+      </div>
+
+      <!-- ALLOCATION FILTERS -->
+      <div class="alloc-filter-container">
+        <label for="allocYearFilter">Tahun:</label>
+        <select id="allocYearFilter"></select>
+        <label for="allocMonthFilter">Bulan:</label>
+        <select id="allocMonthFilter">
+          <option value="all">Semua</option>
+          <option value="1">Januari</option>
+          <option value="2">Februari</option>
+          <option value="3">Mac</option>
+          <option value="4">April</option>
+          <option value="5">Mei</option>
+          <option value="6">Jun</option>
+          <option value="7">Julai</option>
+          <option value="8">Ogos</option>
+          <option value="9">September</option>
+          <option value="10">Oktober</option>
+          <option value="11">November</option>
+          <option value="12">Disember</option>
+        </select>
+      </div>
+
+      <!-- Peruntukan / Digunakan / Baki -->
+      <div class="allocation-container">
+        <div class="stat-box alloc-box" style="background:#2563eb;">
+          <div class="stat-title">Peruntukan (RM)</div>
+          <div class="stat-value" id="peruntukanVal">0.00</div>
+        </div>
+        <div class="stat-box alloc-box" style="background:#3b82f6;">
+          <div class="stat-title">Digunakan (RM)</div>
+          <div class="stat-value" id="digunakanVal">0.00</div>
+        </div>
+        <div class="stat-box alloc-box" style="background:#ef4444;">
+          <div class="stat-title">Baki (RM)</div>
+          <div class="stat-value" id="bakiVal">0.00</div>
+        </div>
+      </div>
+
+
+      <!-- LINE CHART -->
+      <h3 class="chart-title">Graf Status Permohonan</h3>
+      <div class="chart-container">
+        <div class="chart-filters">
+          <label for="statusFilter">Pilih Status:</label>
+          <select id="statusFilter">
+            <option value="all">Papar Semua (Lulus, Dalam Proses, Ditolak, Agih, Mohon)</option>
+            <option value="Lulus">Jumlah yang Lulus</option>
+            <option value="Dalam Proses">Jumlah yang Dalam Proses</option>
+            <option value="Ditolak">Jumlah yang Ditolak</option>
+            <option value="Agih">Jumlah yang Diagih</option>
+            <option value="Mohon">Jumlah yang Mohon (Total)</option>
+          </select>
+          <label for="yearFilterLine">Tahun:</label>
+          <select id="yearFilterLine"></select>
+        </div>
+        <canvas id="lineChart" width="600" height="300"></canvas>
+      </div>
+
+      <!-- BAR CHART -->
+      <h3 class="chart-title">Graf Jenis Bantuan</h3>
+      <div class="chart-container">
+        <div class="chart-filters">
+          <label for="yearFilterBar">Tahun:</label>
+          <select id="yearFilterBar"></select>
+        </div>
+        <canvas id="barChart" width="600" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- Modal for Lain-lain details -->
+  <div id="modalLainLain" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <img src="images/welfare.png" alt="Welfare Icon" class="modal-icon">
+      <h3>Maklumat Bantuan Lain-lain</h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Initialize Firebase and data buckets
+    var db = firebase.database();
+    let lineDataRaw = {}, barDataRaw = {}, lainLainDetailsByYear = {};
+    let countLulus=0, countProses=0, countTolak=0, countAgih=0;
+    let budgetsByYearMonth = {}, usedByYearMonth = {};
+    let lineChart, barChart;
+    let currentPegawai="Pegawai";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1) Identify Pegawai
+      const email = localStorage.getItem("userEmail");
+      const snap = await db.ref("Users/pegawai_kebajikan")
+                         .orderByChild("email").equalTo(email).once("value");
+      if (snap.exists()) snap.forEach(c=> currentPegawai=c.val().username);
+      document.getElementById("pegawaiUsername").textContent = currentPegawai;
+      document.getElementById("welcomeMsg").textContent =
+        "Selamat Datang ke ADUNKasih @ Kedah, " + currentPegawai;
+
+      // 2) Populate allocation year filter
+      const yearSel = document.getElementById("allocYearFilter");
+      const nowYear = new Date().getFullYear();
+      for (let y= nowYear-2; y<= nowYear+2; y++){
+        const o=document.createElement("option");
+        o.value=o.textContent=y;
+        yearSel.appendChild(o);
+      }
+      yearSel.value= nowYear;
+
+      // 3) Load budgets
+      const budSnap = await db.ref(`budgets/${currentPegawai}`).once("value");
+      budSnap.forEach(c=>{
+        const date=c.key; // YYYY-MM-DD
+        const {year,month}=parseYMD(date);
+        budgetsByYearMonth[year]=budgetsByYearMonth[year]||{};
+        budgetsByYearMonth[year][month]=(budgetsByYearMonth[year][month]||0)+ Number(c.val().allocated);
+      });
+
+      // 4) Load usage
+      const permSnap=await db.ref("permohonan").once("value");
+      permSnap.forEach(c=>{
+        const p=c.val();
+        if(p.pemohon?.adun!==currentPegawai) return;
+        if(p.applicationStatus!=="Bantuan telah Diagihkan") return;
+        const date=p.tarikhBantuanDiagihkan
+          || Object.values(p.applicationStatusTimestamps||{})[0];
+        const {year,month}=parseYMD(date);
+        const amt=Number(p.jumlahDiagihkan)||0;
+        usedByYearMonth[year]=usedByYearMonth[year]||{};
+        usedByYearMonth[year][month]=(usedByYearMonth[year][month]||0)+amt;
+      });
+
+      // 5) Initial allocation stats
+      updateAllocationStats();
+
+      // 6) Wire up filters
+      document.getElementById("allocYearFilter")
+        .addEventListener("change", updateAllocationStats);
+      document.getElementById("allocMonthFilter")
+        .addEventListener("change", updateAllocationStats);
+
+      // 7) Redirect button
+      document.getElementById("gotoReportBtn").addEventListener("click",()=>{
+        window.location.href="pegawaiReport.html";
+      });
+
+      // 8) Fetch permohonan & jenisKebajikan for status charts
+      const [permDataSnap, jenisSnap] = await Promise.all([
+        db.ref("permohonan").once("value"),
+        db.ref("jenisKebajikan").once("value")
+      ]);
+      const permData = permDataSnap.val()||{};
+      const jenisData = jenisSnap.val()||{};
+      const welfareTypes = {};
+      Object.values(jenisData).forEach(i=>{ if(i.jenisBantuan) welfareTypes[i.jenisBantuan]=0; });
+
+      // 9) Populate chart year filters
+      populateYearDropdown("yearFilterLine", nowYear-2, nowYear+2);
+      populateYearDropdown("yearFilterBar", nowYear-2, nowYear+2);
+
+      // 10) Process each permohonan for status counters & chart buckets
+      Object.values(permData).forEach(p=>{
+        if(!p.pemohon||p.pemohon.adun!==currentPegawai) return;
+        let key="Dalam Proses";
+        if(p.applicationStatus==="Permohonan Diluluskan"){ key="Lulus"; countLulus++; }
+        else if(p.applicationStatus.match(/Ditolak|Dibatalkan/)){ key="Ditolak"; countTolak++; }
+        else if(p.applicationStatus==="Bantuan telah Diagihkan"){ key="Agih"; countAgih++; }
+        else { countProses++; }
+        const ts = p.applicationStatusTimestamps
+          ? Object.values(p.applicationStatusTimestamps)[0]
+          : null;
+        const {year,month}=parseDateYearMonth(ts);
+        if(!year) return;
+        lineDataRaw[year]=lineDataRaw[year]||{};
+        lineDataRaw[year][month]=lineDataRaw[year][month]||{Lulus:0,'Dalam Proses':0,Ditolak:0,Agih:0};
+        lineDataRaw[year][month][key]++;
+        let jenisVal='Lain-lain';
+        if(p.bantuan?.jenis&& welfareTypes.hasOwnProperty(p.bantuan.jenis)){
+          jenisVal=p.bantuan.jenis;
+        } else {
+          lainLainDetailsByYear[year]=lainLainDetailsByYear[year]||[];
+          lainLainDetailsByYear[year].push(p.bantuan?.lainLain||'Tiada maklumat tambahan');
+        }
+        barDataRaw[year]=barDataRaw[year]||{};
+        Object.keys(welfareTypes).forEach(wt=>barDataRaw[year][wt]=barDataRaw[year][wt]||0);
+        barDataRaw[year]['Lain-lain']=barDataRaw[year]['Lain-lain']||0;
+        barDataRaw[year][jenisVal]++;
+      });
+
+      // 11) Update status counters in DOM
+      const totalMohon = countLulus+countProses+countTolak+countAgih;
+      document.getElementById("countLulus").textContent=countLulus;
+      document.getElementById("countProses").textContent=countProses;
+      document.getElementById("countTolak").textContent=countTolak;
+      document.getElementById("countAgih").textContent=countAgih;
+      document.getElementById("countMohon").textContent=totalMohon;
+
+      // 12) Initialize charts
+      initLineChart('all', nowYear);
+      initBarChart(nowYear);
+
+      // 13) Chart filter listeners
+      document.getElementById('statusFilter').addEventListener('change',e=>
+        initLineChart(e.target.value, document.getElementById('yearFilterLine').value)
+      );
+      document.getElementById('yearFilterLine').addEventListener('change',e=>
+        initLineChart(document.getElementById('statusFilter').value,e.target.value)
+      );
+      document.getElementById('yearFilterBar').addEventListener('change',e=>
+        initBarChart(e.target.value)
+      );
+
+      // Modal handlers
+      document.querySelector("#modalLainLain .close").onclick = ()=> {
+        document.getElementById("modalLainLain").style.display="none";
+      };
+      window.onclick = e=> {
+        if(e.target==document.getElementById("modalLainLain"))
+          document.getElementById("modalLainLain").style.display="none";
+      };
+
+    }); // end DOMContentLoaded
+
+    // ====== Allocation update ======
+    function updateAllocationStats(){
+      const y=document.getElementById("allocYearFilter").value;
+      const m=document.getElementById("allocMonthFilter").value;
+      let alloc=0, used=0;
+      if(budgetsByYearMonth[y]){
+        if(m==='all'){
+          alloc=Object.values(budgetsByYearMonth[y]).reduce((a,b)=>a+b,0);
+        } else alloc=budgetsByYearMonth[y][m]||0;
+      }
+      if(usedByYearMonth[y]){
+        if(m==='all'){
+          used=Object.values(usedByYearMonth[y]).reduce((a,b)=>a+b,0);
+        } else used=usedByYearMonth[y][m]||0;
+      }
+      const baki=alloc-used;
+      document.getElementById("peruntukanVal").textContent=alloc.toFixed(2);
+      document.getElementById("digunakanVal").textContent=used.toFixed(2);
+      document.getElementById("bakiVal").textContent=baki.toFixed(2);
+    }
+
+    // ====== Utilities for charts & parsing dates ======
+    function populateYearDropdown(id, start, end){
+      const sel=document.getElementById(id);
+      for(let y=start;y<=end;y++){
+        const o=document.createElement("option");
+        o.value=o.textContent=y; sel.appendChild(o);
+      }
+      sel.value=new Date().getFullYear();
+    }
+    function parseYMD(s){
+      if(!s) return {year:null,month:null};
+      if(/^\d{4}-\d{2}-\d{2}/.test(s)){
+        const [y,mo]=s.split("-"); return {year:y,month:mo.replace(/^0/,"")};
+      }
+      const parts=s.split(" ")[0].split("/");
+      if(parts.length===3) return {year:parts[2],month:parts[1].replace(/^0/,"")};
+      return {year:null,month:null};
+    }
+    function parseDateYearMonth(s){
+      if(!s) return {year:null,month:null};
+      const p=s.replace(/,/g,"").replace(/-/g,"/").split(" ")[0].split("/");
+      return p.length===3 ? {year:p[2],month:p[1]} : {year:null,month:null};
+    }
+    function initLineChart(status, year){
+      if(lineChart) lineChart.destroy();
+      const ctx=document.getElementById("lineChart").getContext("2d");
+      const labels=["01","02","03","04","05","06","07","08","09","10","11","12"];
+      const dataYear=lineDataRaw[year]||{};
+      const ds=[];
+      if(status==="all"){
+        ["Lulus","Dalam Proses","Ditolak","Agih","Mohon"].forEach(key=>{
+          const arr=labels.map(m=>{
+            const o=dataYear[m]||{Lulus:0,"Dalam Proses":0,Ditolak:0,Agih:0};
+            return key==="Mohon"
+              ? o.Lulus+o["Dalam Proses"]+o.Ditolak+o.Agih
+              : (o[key]||0);
+          });
+          const cols={
+            "Lulus":["#00a878","rgba(0,168,120,0.2)"],
+            "Dalam Proses":["#3b82f6","rgba(59,130,246,0.2)"],
+            "Ditolak":["#ef4444","rgba(239,68,68,0.2)"],
+            "Agih":["#8c04cf","rgba(140,4,207,0.2)"],
+            "Mohon":["#f59e0b","rgba(245,158,11,0.2)"]
+          };
+          ds.push({
+            label:key,
+            data:arr,
+            borderColor:cols[key][0],
+            backgroundColor:cols[key][1],
+            fill:false
+          });
+        });
+      } else if(status==="Mohon"){
+        const arr=labels.map(m=>{
+          const o=dataYear[m]||{Lulus:0,"Dalam Proses":0,Ditolak:0,Agih:0};
+          return o.Lulus+o["Dalam Proses"]+o.Ditolak+o.Agih;
+        });
+        ds.push({
+          label:"Mohon (Total)",
+          data:arr,
+          borderColor:"#f59e0b",
+          backgroundColor:"rgba(245,158,11,0.2)",
+          fill:false
+        });
+      } else {
+        const arr=labels.map(m=>(dataYear[m]||{})[status]||0);
+        const cm={
+          "Lulus":{b:"#00a878",bg:"rgba(0,168,120,0.2)"},
+          "Dalam Proses":{b:"#3b82f6",bg:"rgba(59,130,246,0.2)"},
+          "Ditolak":{b:"#ef4444",bg:"rgba(239,68,68,0.2)"},
+          "Agih":{b:"#8c04cf",bg:"rgba(140,4,207,0.2)"}
+        };
+        const c=cm[status]||{b:"#000",bg:"rgba(0,0,0,0.2)"};
+        ds.push({label:status,data:arr,borderColor:c.b,backgroundColor:c.bg,fill:false});
+      }
+      lineChart=new Chart(ctx,{
+        type:"line",
+        data:{labels,datasets:ds},
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          scales:{y:{beginAtZero:true,ticks:{stepSize:50}}}
+        }
+      });
+    }
+    function initBarChart(year){
+      if(barChart) barChart.destroy();
+      const ctx=document.getElementById("barChart").getContext("2d");
+      const obj=barDataRaw[year]||{};
+      const labels=Object.keys(obj), vals=Object.values(obj);
+      const bg=labels.map((_,i)=>[
+        "#FF6384","#36A2EB","#FFCE56","#cc65fe","#ff9f40","#66ff99",
+        "#ff6666","#6699ff","#ffcc99","#99ffcc"
+      ][i%10]);
+      barChart=new Chart(ctx,{
+        type:"bar",
+        data:{labels,datasets:[{label:"Bilangan Pemohon",data:vals,backgroundColor:bg}]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          scales:{y:{beginAtZero:true,ticks:{stepSize:50}}},
+          plugins:{legend:{display:false}},
+          onClick:e=>{
+            const pts=barChart.getElementsAtEventForMode(e,"nearest",{intersect:true},true);
+            if(pts.length){
+              const lbl=barChart.data.labels[pts[0].index];
+              if(lbl==="Lain-lain") showLainLainModal(year);
+            }
+          }
+        }
+      });
+    }
+    function showLainLainModal(year){
+      const details=lainLainDetailsByYear[year]||[];
+      const mb=document.getElementById("modalBody");
+      mb.innerHTML="";
+      if(!details.length){
+        mb.innerHTML="<p>Tiada maklumat tambahan untuk Lain-lain.</p>";
+      } else {
+        const ul=document.createElement("ul");
+        details.forEach(d=>{
+          const li=document.createElement("li");
+          li.textContent=d; ul.appendChild(li);
+        });
+        mb.appendChild(ul);
+      }
+      document.getElementById("modalLainLain").style.display="block";
+    }
+  </script>
+  <script src="logout.js"></script>
+</body>
+</html>

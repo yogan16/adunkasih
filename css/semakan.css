@@ -1,0 +1,302 @@
+    /* ====== GLOBAL STYLES ====== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Fredoka', sans-serif;
+        margin: 0;
+        padding: 0;
+        margin-top: 15vh; /* accommodates fixed header */
+        background: url('../images/kedah.jpg') no-repeat center center fixed;
+        background-size: cover;
+        overflow-y: auto;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+      }
+  
+      /* ====== HEADER ====== */
+      header {
+        position: fixed;
+        font-family: 'Times New Roman', serif;
+        top: 0;
+        width: 100%;
+        background: black;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+      }
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .logo-container img {
+        height: 40px;
+        width: 40px;
+        object-fit: contain;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 1px;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+      }
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+        transition: background 0.3s, color 0.3s;
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+      .nav-links a:hover {
+        background: white;
+        color: #2c1e3c;
+        border-radius: 15px;
+        padding: 10px 20px;
+      }
+      .logout-btn {
+        background: #bc0a0f;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        text-decoration: none; /* Remove underline */
+        transition: background 0.3s ease;
+      }
+      .logout-btn:hover {
+        background: grey !important;
+        color: white!important;     
+        transition: background 0.3s ease !important;
+      }
+      .logout-btn::before {
+        content: "";
+        display: inline-block;
+        background: url('../images/logout.png') no-repeat center center;
+        background-size: contain;
+        width: 25px;
+        height: 25px;
+        margin-right: 8px;
+      }
+  
+      /* ====== HAMBURGER MENU (MOBILE) ====== */
+      .menu-toggle {
+        display: none;
+        font-size: 30px;
+        color: white;
+        cursor: pointer;
+        margin-left: 20px;
+      }
+      @media (max-width: 768px) {
+        header {
+          flex-wrap: wrap;
+        }
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          background: black;
+          position: absolute;
+          top: 60px;
+          left: 0;
+          z-index: 1000;
+        }
+        .nav-links.active {
+          display: flex;
+        }
+        .nav-links a {
+          margin: 10px 0;
+          padding: 10px 20px;
+          width: 50%;
+          text-align: left;
+        }
+        .nav-links a:hover {
+          background: white;
+          color: #2c1e3c;
+          border-radius: 15px;
+        }
+        .menu-toggle {
+          display: block;
+          margin-right: 32px;
+        }
+      }
+  
+      /* ====== FOOTER ====== */
+      footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+      }
+  
+      /* ====== MAIN WRAPPER ====== */
+      .main-wrapper {
+        width: 90%;
+        max-width: 1000px;
+        margin: 0 auto;
+        margin-top: 25vh; /* space above footer */
+      }
+  
+      /* ====== OUTER CONTAINER ====== */
+      .semakan-container {
+        background: rgba(255, 255, 255, 0.85); /* White with slight transparency */
+        backdrop-filter: blur(3px);
+        border-radius: 15px;
+        margin: 40px auto;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        overflow: hidden;
+        border: 1px solid #ccc;
+        text-align: center; /* center all content */
+        padding: 30px 20px;
+        border: 3px solid black; 
+      }
+  
+      .semakan-header {
+        background: #bc0a0f;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+  
+      /* ====== INNER CONTAINER ====== */
+      .inner-container {
+        background: #fdfdfd; 
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin: 20px;
+        padding: 30px 20px;
+        border: 3px solid black; 
+      }
+  
+      /* ====== FORM BODY ====== */
+      .semakan-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      label {
+        font-weight: 600;
+        color: #333;
+        font-size: 16px;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .ic-input {
+        width: 80%;
+        max-width: 400px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        font-family: 'Fredoka', sans-serif;
+        background: #f1f1f1; /* visually indicate read-only */
+      }
+      .ic-input:disabled {
+        cursor: not-allowed;
+      }
+      .btn-check {
+        background: #bc0a0f;
+        color: #fff;
+        padding: 12px 40px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+      }
+      .btn-check:hover {
+        background: #333;
+      }
+      .btn-back {
+        background: #bc0a0f;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+      }
+      .btn-back:hover {
+        background: #333;
+      }
+      .button-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 30px;
+        margin-top: 20px;
+      }
+  
+      /* ====== MODAL STYLES ====== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        display: none; /* hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 2000; /* on top of everything */
+      }
+      .modal-content {
+        background: #fff;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+      .modal-message {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+      .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+      .modal-button {
+        background: #bc0a0f;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      .modal-button:hover {
+        background: #333;
+      }

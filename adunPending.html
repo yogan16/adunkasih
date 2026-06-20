@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADUN Kebajikan – Permohonan Menunggu Kelulusan</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- ADUN Pending CSS -->
+  <link rel="stylesheet" href="css/adunpending.css">
+</head>
+<body>
+
+  <!-- ADUN login check -->
+  <script>
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai ADUN.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo 1">
+      <img src="images/logo2.png" alt="Logo 2">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="adundashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Wakil ADUN">
+        </div>
+        <div class="admin-name" id="adunSidebarName">Loading...</div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="adundashboard.html"><img src="images/Graphs.png" alt=""> Graf Agihan</a></li>
+        <li><a class="active" href="adunPending.html"><img src="images/proses.png" alt="">Permohonan Proces</a></li>
+        <li><a href="maklumatPeruntukan.html"><img src="images/money.png" alt=""> Maklumat Peruntukan</a></li>
+        <li><a href="adunReport.html"><img src="images/report.png" alt=""> Laporan</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- TITLE + MONTH FILTER -->
+      <div class="title-filter-container">
+        <div class="page-title">Senarai Permohonan Menunggu Kelulusan</div>
+        <div class="month-filter">
+          <select id="monthFilter">
+            <option value="">Semua Bulan</option>
+            <option value="01">Januari</option>
+            <option value="02">Februari</option>
+            <option value="03">Mac</option>
+            <option value="04">April</option>
+            <option value="05">Mei</option>
+            <option value="06">Jun</option>
+            <option value="07">Julai</option>
+            <option value="08">Ogos</option>
+            <option value="09">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Disember</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CARDS GRID -->
+      <div class="cards-grid" id="cardsGrid">
+        <!-- Cards injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- DETAILS MODAL -->
+  <div class="modal" id="infoModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">MAKLUMAT PERMOHONAN</div>
+        <div class="modal-close" id="modalClose">X</div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Left Column -->
+        <div class="modal-left">
+          <h4>MAKLUMAT PEMOHON :</h4>
+          <div class="info-row"><label>Nama</label><span id="mNama"></span></div>
+          <div class="info-row"><label>No. MyKad</label><span id="mNoMyKad"></span></div>
+          <div class="info-row"><label>Umur</label><span id="mUmur"></span></div>
+          <div class="info-row"><label>Jantina</label><span id="mJantina"></span></div>
+          <div class="info-row"><label>No. Tel</label><span id="mNoTel"></span></div>
+          <div class="info-row"><label>Pekerjaan</label><span id="mPekerjaan"></span></div>
+          <div class="info-row"><label>Status Perkahwinan</label><span id="mStatusPerkahwinan"></span></div>
+          <div class="info-row"><label>Pendapatan Kasar</label><span id="mPendapatan"></span></div>
+          <div class="info-row"><label>Sumber Data</label><span id="mSumberData"></span></div>
+          <div class="info-row"><label>Status Permohonan</label><span id="mApplicationStatus"></span></div>
+          <div class="info-row" id="quotationAmountRow" style="display:none;"><label>Jum.SebutHarga(RM)</label><span id="mQuotationAmount">0.00</span></div>
+        </div>
+        <!-- Right Column -->
+        <div class="modal-right">
+          <h4>ALAMAT SURAT MENYURAT :</h4>
+          <div class="info-row"><label>Alamat</label><span id="mAlamat"></span></div>
+          <div class="info-row"><label>Poskod</label><span id="mPoskod"></span></div>
+          <div class="info-row"><label>ADUN</label><span id="mAdun"></span></div>
+          <div class="info-row"><label>Bandar</label><span id="mBandar"></span></div>
+          <div class="info-row"><label>Bantuan</label><span id="mBantuanJenis"></span></div>
+          <div class="info-row"><label>Penerangan</label><span id="mPenerangan"></span></div>
+          <div class="info-row"><label>Lain-Lain</label><span id="mLainLain"></span></div>
+          <div class="doc-row">
+            <label>Salinan MyKad</label>
+            <a id="mMykadFile" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon"> Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Salinan Kad OKU</label>
+            <a id="mOkuFile" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon"> Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Bukti Pendapatan</label>
+            <a id="mBuktiPendapatan" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon"> Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Dokumen Tambahan</label>
+            <a id="mDokumenTambahan" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon"> Muat Turun
+            </a>
+          </div>
+          <div class="doc-row" id="quotationFileRow" style="display:none;">
+            <label>Quotation (PDF)</label>
+            <a id="mQuotationFile" href="#" target="_blank">
+              <img src="images/download.png" class="download-icon"> Muat Turun
+            </a>
+          </div>
+        </div>
+
+        <!-- Dependents -->
+        <div class="tanggungan-container">
+          <div class="tanggungan-title">MAKLUMAT TANGGUNGAN :</div>
+          <table class="tanggungan-table" id="tanggunganTable">
+            <thead>
+              <tr>
+                <th>No</th><th>Nama</th><th>No. MyKad</th>
+                <th>Umur</th><th>Hubungan</th><th>Pendapatan (RM)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5" style="text-align:right;font-weight:bold;">
+                  Jumlah Pendapatan (RM):
+                </td>
+                <td id="mTotalPendapatan">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="modal-footer">
+        <button class="footer-btn" id="btnLulus">LULUS</button>
+        <button class="footer-btn btn-tolak" id="btnTolak">TOLAK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM BEFORE DETAIL -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Pengesahan</div>
+        <div class="modal-close" id="confirmModalClose">X</div>
+      </div>
+      <div class="modal-body">
+        <p>Adakah anda ingin semak maklumat permohonan ini?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="footer-btn" id="btnConfirmTeruskan">Teruskan</button>
+        <button class="footer-btn btn-tolak" id="btnConfirmBatal">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOLOK DESCRIPTION MODAL -->
+  <div class="modal" id="tolakModal">
+    <div class="modal-box">
+      <span class="modal-close" id="tolakModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/warning.png" alt="Warning Icon" class="modal-icon">
+        <h2 class="modal-title">TOLAK</h2>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:10px;">
+        <p>Sila masukkan penerangan untuk menolak:</p>
+        <textarea id="adunTolakPenerangan" rows="4" style="width:100%;border:1px solid #ccc;border-radius:4px;padding:8px;"></textarea>
+      </div>
+      <div class="modal-footer" style="justify-content:center;gap:20px;">
+        <button class="modal-btn-tolak" id="btnAdunTolakSahkan">SAHKAN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLAG HISTORY MODAL -->
+  <div class="modal" id="flagModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Permohonan yang telah Diluluskan</div>
+        <div class="modal-close" id="flagModalClose">X</div>
+      </div>
+      <div class="modal-body">
+        <ul id="flagList" style="padding-left:20px;"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="logout.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script>
+    const db = firebase.database();
+    let currentPermData = null;
+    let allPermohonan   = [];
+    let currentADUN     = "";
+
+    // 1) Fetch ADUN name
+    db.ref("Users/wakil_adun")
+      .orderByChild("email")
+      .equalTo(localStorage.getItem("userEmail"))
+      .once("value")
+      .then(snap => {
+        snap.forEach(ch => currentADUN = ch.val().username || "");
+        document.getElementById("adunSidebarName").textContent = currentADUN;
+        document.getElementById("welcomeMsg").textContent =
+          "Selamat Datang ke ADUNKasih @ Kedah, " + currentADUN;
+        loadPermohonan();
+      });
+
+    // 2) Load “Menunggu Kelulusan ADUN”
+    function loadPermohonan() {
+      allPermohonan = [];
+      db.ref("permohonan").once("value", snap => {
+        snap.forEach(cs => {
+          const pd = cs.val(); pd.key = cs.key;
+          if (pd.applicationStatus === "Menunggu Kelulusan ADUN" &&
+              pd.pemohon?.adun === currentADUN) {
+            allPermohonan.push(pd);
+          }
+        });
+        filterAndRender();
+      });
+    }
+
+    // 3) Filter by month & render
+    function filterAndRender() {
+      const month = document.getElementById("monthFilter").value;
+      const grid  = document.getElementById("cardsGrid");
+      grid.innerHTML = "";
+      allPermohonan.forEach(pd => {
+        if (month) {
+          const ts = pd.applicationStatusTimestamps?.["Permohonan telah Dihantar"]||"";
+          if (ts.substring(3,5) !== month) return;
+        }
+        createCard(pd);
+      });
+    }
+
+    // 4) Create a card
+    function createCard(pd) {
+      const div = document.createElement("div");
+      div.className = "card-item";
+      div.onclick   = () => confirmApplication(pd);
+      div.innerHTML = `
+        <div class="card-icon"><img src="images/profile3.png"></div>
+        <div class="card-name">${pd.pemohon?.nama||"—"}</div>
+        <div class="card-info">${pd.pemohon?.noMykad||"—"}</div>
+        <div class="card-info">${pd.pemohon?.noTel||"—"}</div>
+        <div class="card-bantuan">${pd.bantuan?.jenis||"—"}</div>
+        <div class="card-date">${pd.applicationStatusTimestamps?.["Permohonan telah Dihantar"]||"—"}</div>
+        <div class="card-status">MENUNGGU</div>`;
+      document.getElementById("cardsGrid").appendChild(div);
+      // ─── START RED FLAG SNIPPET ───
+      const noMykad = (pd.pemohon?.noMykad || "").trim();
+      if (noMykad) {
+        firebase.database()
+          .ref("permohonan")
+          .orderByChild("pemohon/noMykad")
+          .equalTo(noMykad)
+          .once("value")
+          .then(snap => {
+            const history = [];
+            snap.forEach(ch => {
+              const x = ch.val();
+              if (x.applicationStatus === "Bantuan telah Diagihkan") {
+                const ts = x.applicationStatusTimestamps?.["Bantuan telah Diagihkan"] || "—";
+                history.push(ts);
+              }
+            });
+            if (history.length) {
+              const flag = document.createElement("img");
+              flag.src       = "images/flag.png";
+              flag.className = "card-flag-img";
+              flag.style     = "position:absolute; top:8px; right:8px; width:30px; cursor:pointer;";
+              flag.addEventListener("click", e => {
+                e.stopPropagation();
+                const ul = document.getElementById("flagList");
+                ul.innerHTML = "";
+                history.forEach(date => {
+                  const li = document.createElement("li");
+                  li.textContent = date;
+                  ul.appendChild(li);
+                });
+                document.getElementById("flagModal").style.display = "flex";
+              });
+              div.appendChild(flag);
+            }
+          });
+      }
+
+    }
+
+    // 5) Confirm before detail
+    function confirmApplication(pd) {
+      currentPermData = pd;
+      showDetails(pd);
+      //document.getElementById("confirmModal").style.display = "flex";
+    }
+    document.getElementById("btnConfirmTeruskan").onclick = () => {
+      document.getElementById("confirmModal").style.display = "none";
+      showDetails(currentPermData);
+    };
+    document.getElementById("btnConfirmBatal").onclick = () => {
+      document.getElementById("confirmModal").style.display = "none";
+    };
+    document.getElementById("confirmModalClose").onclick = () => {
+      document.getElementById("confirmModal").style.display = "none";
+    };
+    // Close the flag history modal
+    document.getElementById("flagModalClose").onclick = () => {
+      document.getElementById("flagModal").style.display = "none";
+    };
+
+    // 6) Show details modal
+    function updateDownloadLink(id, url) {
+      const a = document.getElementById(id);
+      if (url) { a.href = url; a.style.color = ""; }
+      else    { a.href = "#";  a.style.color = "red"; }
+    }
+
+    function showDetails(pd) {
+      // Applicant info
+      document.getElementById("mNama").textContent            = pd.pemohon?.nama||"";
+      document.getElementById("mNoMyKad").textContent         = pd.pemohon?.noMykad||"";
+      document.getElementById("mUmur").textContent            = pd.pemohon?.umur||"";
+      document.getElementById("mJantina").textContent         = pd.pemohon?.jantina||"";
+      document.getElementById("mNoTel").textContent           = pd.pemohon?.noTel||"";
+      document.getElementById("mPekerjaan").textContent       = pd.pemohon?.pekerjaan||"";
+      document.getElementById("mStatusPerkahwinan").textContent = pd.pemohon?.statusPerkahwinan||"";
+      document.getElementById("mPendapatan").textContent      = pd.pemohon?.pendapatanKasar||"";
+      document.getElementById("mSumberData").textContent      = pd.sumberData||"";
+      document.getElementById("mApplicationStatus").textContent = pd.applicationStatus||"";
+
+      // Address & aid
+      document.getElementById("mAlamat").textContent          = pd.pemohon?.alamat||"";
+      document.getElementById("mPoskod").textContent          = pd.pemohon?.poskod||"";
+      document.getElementById("mAdun").textContent            = pd.pemohon?.adun||"";
+      document.getElementById("mBandar").textContent          = pd.pemohon?.bandar||"";
+      document.getElementById("mBantuanJenis").textContent    = pd.bantuan?.jenis||"";
+      document.getElementById("mPenerangan").textContent      = pd.bantuan?.huraian||"";
+      document.getElementById("mLainLain").textContent        = pd.bantuan?.lainLain||"";
+
+      // Docs
+      updateDownloadLink("mMykadFile", pd.dokumen?.mykadFile);
+      updateDownloadLink("mOkuFile", pd.dokumen?.okuFile);
+      updateDownloadLink("mBuktiPendapatan", pd.dokumen?.buktiPendapatan);
+      updateDownloadLink("mDokumenTambahan", pd.dokumen?.dokumenTambahan);
+      // Quotation link + amount
+      updateDownloadLink("mQuotationFile", pd.quotationURL);
+      document.getElementById("mQuotationAmount").textContent =(parseFloat(pd.quotationAmount) || 0).toFixed(2);
+
+      // only show quotation fields for 'Bantuan Baiki Rumah'
+      const isBaiki = pd.bantuan?.jenis === "Bantuan Baiki Rumah";
+      document.getElementById("quotationFileRow").style.display   = isBaiki ? "grid" : "none";
+      document.getElementById("quotationAmountRow").style.display = isBaiki ? "grid" : "none";
+
+
+      // Dependents
+      const tbody = document.getElementById("tanggunganTable").querySelector("tbody");
+      tbody.innerHTML = "";
+      let total = 0;
+      if (pd.tanggungan) {
+        Object.values(pd.tanggungan).forEach((t,i) => {
+          const pend = parseFloat(t.pendapatan)||0;
+          total += pend;
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${i+1}</td>
+            <td>${t.name||""}</td>
+            <td>${t.mykad||""}</td>
+            <td>${t.umur||""}</td>
+            <td>${t.hubungan||""}</td>
+            <td>${pend.toFixed(2)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+      document.getElementById("mTotalPendapatan").textContent = total.toFixed(2);
+
+      document.getElementById("infoModal").style.display = "flex";
+    }
+    document.getElementById("modalClose").onclick = () => {
+      document.getElementById("infoModal").style.display = "none";
+    };
+
+    // 7) LULUS → confirm() → update
+    document.getElementById("btnLulus").onclick = () => {
+      if (!currentPermData) return;
+      if (confirm("Adakah anda pasti ingin MELULUSKAN permohonan ini?")) {
+        const n = new Date();
+        const ts = `${("0"+n.getDate()).slice(-2)}-${("0"+(n.getMonth()+1)).slice(-2)}-${n.getFullYear()} ${n.getHours()%12||12}:${("0"+n.getMinutes()).slice(-2)} ${n.getHours()>=12?"PM":"AM"}`;
+        db.ref("permohonan/"+currentPermData.key).update({
+          applicationStatus: "Permohonan Diluluskan",
+          ["applicationStatusTimestamps/Permohonan Diluluskan"]: ts
+        }).then(()=>{
+          alert("Permohonan diluluskan oleh ADUN.");
+          document.getElementById("infoModal").style.display="none";
+          loadPermohonan();
+        });
+      }
+    };
+
+    // 8) TOLAK → open tolakModal
+    document.getElementById("btnTolak").onclick = () => {
+      document.getElementById("tolakModal").style.display = "flex";
+    };
+    document.getElementById("tolakModalClose").onclick = () => {
+      document.getElementById("tolakModal").style.display = "none";
+    };
+
+    // 9) SAHKAN Tolak → require penerangan → update
+    document.getElementById("btnAdunTolakSahkan").onclick = () => {
+      const text = document.getElementById("adunTolakPenerangan").value.trim();
+      if (!text) {
+        alert("Sila masukkan penerangan.");
+        return;
+      }
+      const n = new Date();
+      const ts = `${("0"+n.getDate()).slice(-2)}-${("0"+(n.getMonth()+1)).slice(-2)}-${n.getFullYear()} ${n.getHours()%12||12}:${("0"+n.getMinutes()).slice(-2)} ${n.getHours()>=12?"PM":"AM"}`;
+      db.ref("permohonan/"+currentPermData.key).update({
+        applicationStatus: "Permohonan Dibatalkan",
+        ["applicationStatusTimestamps/Permohonan Dibatalkan"]: ts,
+        tolakPenerangan: text
+      }).then(()=>{
+        alert("Permohonan telah ditolak oleh ADUN.");
+        document.getElementById("tolakModal").style.display="none";
+        document.getElementById("infoModal").style.display="none";
+        loadPermohonan();
+      });
+    };
+
+    // 10) Month filter
+    document.getElementById("monthFilter")
+      .addEventListener("change", filterAndRender);
+  </script>
+</body>
+</html>

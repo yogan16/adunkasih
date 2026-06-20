@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Permohonan Bantuan - ADUNKASIH</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/permohonan.css">
+
+  <!-- Session Check Script -->
+  <script>
+    // Immediately check if the user is logged in by looking for "userIC" in localStorage.
+    if (!localStorage.getItem("userIC")) {
+      alert("Sila log masuk terlebih dahulu.");
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo-container">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="logo">ADUNKASIH</div>
+    </div>
+    <div class="menu-toggle">&#9776;</div>
+    <nav class="nav-links">
+      <a href="dashboard.html">Papan Utama</a>
+      <a href="#">Tentang Kami</a>
+      <a href="#">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </nav>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <div class="page-title-container">
+      <h1>PERMOHONAN BANTUAN</h1>
+    </div>
+
+    <!-- SECTION 1: MAKLUMAT PEMOHON -->
+    <div class="section-container">
+      <div class="section-header">MAKLUMAT PEMOHON</div>
+      <div class="section-body">
+        <div class="form-row">
+          <!-- Left Column -->
+          <div class="form-column">
+            <label for="namaPemohon">Nama</label>
+            <!-- Auto-filled from database and disabled -->
+            <input type="text" id="namaPemohon" placeholder="Nama Penuh" required />
+
+            <label for="noMykad">No. MyKad</label>
+            <!-- Auto-filled from database and disabled -->
+            <input type="text" id="noMykad" placeholder="Contoh: 900101-01-1234" required />
+
+            <label for="umur">Umur</label>
+            <!-- Automatically calculated from No. MyKad -->
+            <input type="number" id="umur" placeholder="Umur" readonly required />
+
+            <label>Jantina</label>
+            <div class="radio-group">
+              <label><input type="radio" name="jantina" value="Lelaki" required /> Lelaki</label>
+              <label><input type="radio" name="jantina" value="Perempuan" required /> Perempuan</label>
+            </div>
+
+            <label for="noTel">No. Telefon Bimbit</label>
+            <!-- Auto-filled from database and disabled -->
+            <input type="text" id="noTel" placeholder="Contoh: 012-3456789" required />
+
+            <label for="pekerjaan">Pekerjaan</label>
+            <input type="text" id="pekerjaan" placeholder="Pekerjaan Pemohon" required />
+
+            <label for="pendapatanKasar">Pendapatan Kasar Bulanan Isi Rumah</label>
+            <!-- Changed to dropdown -->
+            <select id="pendapatanKasar" required>
+              <option value="" disabled selected>Pilih Pendapatan</option>
+              <option value="RM0 - RM1500">RM0 - RM1500</option>
+              <option value="RM1500-RM3000">RM1500 - RM3000</option>
+              <option value="Above RM3000">Above RM3000</option>
+            </select>
+
+            <label for="statusPerkahwinan">Status Perkahwinan</label>
+            <select id="statusPerkahwinan" required>
+              <option value="" disabled selected>Pilih Status</option>
+              <option value="Bujang">Bujang</option>
+              <option value="Berkahwin">Berkahwin</option>
+              <option value="Bercerai">Bercerai</option>
+              <option value="Ibu/Bapa Tunggal">Ibu/Bapa Tunggal</option>
+            </select>
+          </div>
+
+          <!-- Right Column -->
+          <div class="form-column">
+            <label for="alamat">Alamat Surat Menyurat</label>
+            <textarea id="alamat" placeholder="Alamat Surat Menyurat" required></textarea>
+
+            <label for="poskod">Poskod</label>
+            <input type="text" id="poskod" placeholder="Poskod" required />
+
+            <label for="bandar">Bandar</label>
+            <input type="text" id="bandar" placeholder="Bandar" required />
+
+            <label for="adun">Pilih ADUN</label>
+            <select id="adun" required>
+              <option value="">Sila pilih ADUN</option>
+              <option value="ADUN Ayer Hangat">ADUN Ayer Hangat</option>
+              <option value="ADUN Kuah">ADUN Kuah</option>
+              <option value="ADUN Kota Siputeh">ADUN Kota Siputeh</option>
+              <option value="ADUN Ayer Hitam">ADUN Ayer Hitam</option>
+              <option value="ADUN Bukit Kayu Hitam">ADUN Bukit Kayu Hitam</option>
+              <option value="ADUN Jitra">ADUN Jitra</option>
+              <option value="ADUN Kuala Nerang">ADUN Kuala Nerang</option>
+              <option value="ADUN Pedu">ADUN Pedu</option>
+              <option value="ADUN Bukit Lada">ADUN Bukit Lada</option>
+              <option value="ADUN Bukit Pinang">ADUN Bukit Pinang</option>
+              <option value="ADUN Derga">ADUN Derga</option>
+              <option value="ADUN Suka Menanti">ADUN Suka Menanti</option>
+              <option value="ADUN Kota Darul Aman">ADUN Kota Darul Aman</option>
+              <option value="ADUN Alor Mengkudu">ADUN Alor Mengkudu</option>
+              <option value="ADUN Anak Bukit">ADUN Anak Bukit</option>
+              <option value="ADUN Kubang Rotan">ADUN Kubang Rotan</option>
+              <option value="ADUN Pengkalan Kundor">ADUN Pengkalan Kundor</option>
+              <option value="ADUN Tokai">ADUN Tokai</option>
+              <option value="ADUN Sungai Tiang">ADUN Sungai Tiang</option>
+              <option value="ADUN Sungai Limau">ADUN Sungai Limau</option>
+              <option value="ADUN Gua Chempedak">ADUN Gua Chempedak</option>
+              <option value="ADUN Gurun">ADUN Gurun</option>
+              <option value="ADUN Belantek">ADUN Belantek</option>
+              <option value="ADUN Jeneri">ADUN Jeneri</option>
+              <option value="ADUN Bukit Selambau">ADUN Bukit Selambau</option>
+              <option value="ADUN Tanjong Dawai">ADUN Tanjong Dawai</option>
+              <option value="ADUN Pantai Merdeka">ADUN Pantai Merdeka</option>
+              <option value="ADUN Bakar Arang">ADUN Bakar Arang</option>
+              <option value="ADUN Sidam">ADUN Sidam</option>
+              <option value="ADUN Bayu">ADUN Bayu</option>
+              <option value="ADUN Kupang">ADUN Kupang</option>
+              <option value="ADUN Kuala Ketil">ADUN Kuala Ketil</option>
+              <option value="ADUN Merbau Pulas">ADUN Merbau Pulas</option>
+              <option value="ADUN Lunas">ADUN Lunas</option>
+              <option value="ADUN Kulim">ADUN Kulim</option>
+              <option value="ADUN Bandar Baharu">ADUN Bandar Baharu</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: MAKLUMAT TANGGUNGAN (Pilihan) -->
+    <div class="section-container">
+      <div class="section-header">MAKLUMAT TANGGUNGAN (Pilihan)</div>
+      <div class="section-body">
+        <div class="form-row">
+          <div class="form-column">
+            <label for="tanggunganNama">Nama Penuh</label>
+            <input type="text" id="tanggunganNama" placeholder="Nama Penuh" />
+          </div>
+          <div class="form-column">
+            <label for="tanggunganMyKad">No. MyKad</label>
+            <input type="text" id="tanggunganMyKad" placeholder="Contoh: 020305-02-2536" />
+          </div>
+          <div class="form-column">
+            <label for="tanggunganUmur">Umur</label>
+            <input type="number" id="tanggunganUmur" placeholder="Umur" readonly />
+          </div>
+          <div class="form-column">
+            <label for="tanggunganHubungan">Hubungan</label>
+            <input type="text" id="tanggunganHubungan" placeholder="Hubungan" />
+          </div>
+          <div class="form-column">
+            <label for="tanggunganPendapatan">Pendapatan (RM)</label>
+            <input type="number" id="tanggunganPendapatan" placeholder="Pendapatan (RM)" min="0" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="tambahTanggungan()">TAMBAH +</button>
+        <div id="senaraiTanggungan"></div>
+        <!-- NEW: Total pendapatan tanggungan -->
+        <div class="jumlah-pendapatan-container">
+          <label>Jumlah Pendapatan Tanggungan (RM):</label>
+          <span id="jumlahPendapatan">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: BUTIRAN BANTUAN DAN DOKUMEN SOKONGAN -->
+    <div class="section-container">
+      <div class="section-header">BUTIRAN BANTUAN DAN DOKUMEN SOKONGAN</div>
+      <div class="section-body">
+        <div class="form-row">
+          <!-- Left: Butiran Bantuan -->
+          <div class="form-column">
+            <label for="jenisBantuan">Jenis Bantuan Diperlukan</label>
+            <!-- Options will be populated dynamically from Firebase plus "Lain-lain" -->
+            <select id="jenisBantuan" required>
+              <option value="" disabled selected>Pilih Jenis Bantuan</option>
+            </select>
+
+            <label for="lainLain">Jika Pilih (Lain-lain)</label>
+            <input type="text" id="lainLain" placeholder="Nyatakan Jenis Bantuan Diperlukan" />
+
+            <label for="huraianBantuan">Penerangan bagi Bantuan yang Diminta</label>
+            <textarea id="huraianBantuan" placeholder="Tulis sebab perlukan bantuan" required></textarea>
+          </div>
+
+          <!-- Right: Dokumen Sokongan -->
+          <div class="form-column">
+            <label for="mykadFile">Salinan MyKad (Max 1MB) *</label>
+            <input type="file" id="mykadFile" accept=".pdf" required />
+
+            <label for="okuFile">Salinan Kad OKU (Max 1MB)</label>
+            <input type="file" id="okuFile" accept=".pdf" />
+
+            <label for="buktiPendapatan">Bukti Pendapatan (Max 1MB)</label>
+            <input type="file" id="buktiPendapatan" accept=".pdf" />
+
+            <label for="dokumenTambahan">Dokumen Tambahan (Max 1MB)</label>
+            <input type="file" id="dokumenTambahan" accept=".pdf" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: PENGISYTIHARAN DAN PERSETUJUAN -->
+    <div class="section-container">
+      <div class="section-header">PENGISYTIHARAN DAN PERSETUJUAN</div>
+      <div class="section-body">
+        <p>Saya dengan ini mengaku bahawa:</p>
+        <ol class="declaration-list">
+          <li>Semua maklumat dan dokumen sokongan yang diberikan dalam borang permohonan ini adalah benar, tepat dan lengkap sepanjang pengetahuan saya.</li>
+          <li>Saya faham bahawa sebarang maklumat palsu, tidak tepat atau tidak lengkap yang diberikan boleh mengakibatkan penolakan permohonan ini atau tindakan undang-undang diambil terhadap saya.</li>
+          <li>Saya memberi kebenaran kepada pihak yang berkenaan untuk memproses maklumat peribadi saya, dan untuk mendedahkan maklumat ini kepada mana-mana pihak ketiga yang berkenaan atas keperluan urusan, kecuali jika dikehendaki oleh undang-undang.</li>
+        </ol>
+
+        <div class="confirm-check">
+          <input type="checkbox" id="confirmCheck" required />
+          <label for="confirmCheck">Saya mengesahkan bahawa saya telah membaca dan memberikan persetujuan saya seperti yang dinyatakan di atas</label>
+        </div>
+
+        <div class="button-row">
+          <button class="btn-save" onclick="resetForm()">RESET</button>
+          <button class="btn-submit" onclick="submitForm()">HANTAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Syarat Bantuan Modal (styled as your alert box) -->
+  <div id="syaratModal" class="modal">
+    <div class="modal-box">
+      <!-- Alert icon -->
+      <img src="images/warning.png" alt="Alert Icon">
+      <!-- This text is replaced with the syaratBantuan from Firebase -->
+      <p id="syaratContent"></p>
+      <!-- Single OKAY button to close modal -->
+      <div class="modal-button-row">
+        <button id="syaratOkBtn">OKAY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- Firebase Scripts: App, Database, and Storage -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="logout.js"></script>
+  <script src="firebaseConfig.js"></script>
+
+  <script>
+    const database = firebase.database();
+    var storage = firebase.storage();
+
+    // We'll store the programKebajikan from citizenData here
+    let programKebajikanVal = "";
+
+    // Function to calculate age from Malaysian IC (format: YYMMDD-XXXXXX)
+    function calculateAgeFromIC(ic) {
+      if (!ic || ic.length < 6) return "";
+      const currentDate = new Date();
+      let yearPart = parseInt(ic.substring(0,2));
+      const monthPart = parseInt(ic.substring(2,4));
+      const dayPart = parseInt(ic.substring(4,6));
+      // Determine century: if yearPart <= currentYearLastTwoDigits => 2000-based, else 1900-based
+      const currentYearTwoDigits = parseInt(currentDate.getFullYear().toString().slice(-2));
+      let fullYear = (yearPart <= currentYearTwoDigits) ? 2000 + yearPart : 1900 + yearPart;
+      const birthDate = new Date(fullYear, monthPart - 1, dayPart);
+      let age = currentDate.getFullYear() - fullYear;
+      const m = currentDate.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && currentDate.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
+    // Auto-fill applicant's data from "Users/citizen" and also retrieve programKebajikan from "citizenData"
+    document.addEventListener("DOMContentLoaded", function() {
+      const userIC = localStorage.getItem("userIC");
+      if (!userIC) {
+        alert("Sila log masuk terlebih dahulu.");
+        window.location.href = "login.html";
+        return;
+      }
+      
+      // 1) Retrieve user data from "Users/citizen" to fill Name, MyKad, Telephone, Age
+      firebase.database().ref("Users/citizen")
+        .orderByChild("idnumber")
+        .equalTo(userIC)
+        .once("value")
+        .then(function(snapshot) {
+          if (snapshot.exists()) {
+            snapshot.forEach(function(childSnapshot) {
+              const userData = childSnapshot.val();
+              document.getElementById("namaPemohon").value = userData.fullname || "";
+              document.getElementById("namaPemohon").disabled = true;
+              document.getElementById("noMykad").value = userData.idnumber || "";
+              document.getElementById("noMykad").disabled = true;
+              document.getElementById("noTel").value = userData.phone || "";
+              document.getElementById("noTel").disabled = true;
+              // Calculate & set age
+              const calculatedAge = calculateAgeFromIC(userData.idnumber);
+              document.getElementById("umur").value = calculatedAge;
+            });
+          } else {
+            console.log("No registration data found for userIC: " + userIC);
+          }
+        })
+        .catch(function(error) {
+          console.error("Error retrieving registration data: ", error);
+        });
+
+      // 2) Also retrieve programKebajikan from "citizenData" matching kadPengenalan = userIC
+      firebase.database().ref("citizenData")
+        .orderByChild("kadPengenalan")
+        .equalTo(userIC)
+        .once("value")
+        .then(function(snapshot) {
+          if (snapshot.exists()) {
+            snapshot.forEach(function(childSnapshot) {
+              const citizenRecord = childSnapshot.val();
+              if (citizenRecord.programKebajikan) {
+                programKebajikanVal = citizenRecord.programKebajikan;
+              }
+            });
+          } else {
+            console.log("No citizenData found for userIC: " + userIC);
+          }
+        })
+        .catch(function(error) {
+          console.error("Error retrieving citizenData: ", error);
+      });
+
+      // 3) Populate jenisBantuan from "jenisKebajikan", then add "Lain-lain"
+      firebase.database().ref("jenisKebajikan").once("value")
+        .then(function(snapshot) {
+          const jenisSelect = document.getElementById("jenisBantuan");
+          snapshot.forEach(function(childSnapshot) {
+            const data = childSnapshot.val();
+            const option = document.createElement("option");
+            option.value = data.jenisBantuan;
+            option.textContent = data.jenisBantuan;
+            // store all the details as data-attributes
+            option.dataset.syarat     = data.syaratBantuan   || "";
+            option.dataset.umur       = data.umurKelayakan   || "";
+            option.dataset.jumlah     = data.jumlahAgihan    || "";
+            option.dataset.penerangan = data.penerangan      || "";
+            jenisSelect.appendChild(option);
+          });
+          // Add the "Lain-lain" option
+          const lainOption = document.createElement("option");
+          lainOption.value       = "Lain-lain";
+          lainOption.textContent = "Lain-lain";
+          jenisSelect.appendChild(lainOption);
+        })
+        .catch(function(error) {
+          console.error("Error loading jenis kebajikan: ", error);
+        });
+
+      // 4) Show modal with full details when user selects a built‑in type
+      document.getElementById("jenisBantuan").addEventListener("change", function() {
+        const opt = this.options[this.selectedIndex];
+        const lainLainField = document.getElementById("lainLain");
+
+        // Only show for real pilihan (not placeholder or “Lain‑lain”)
+        if (opt.value && opt.value !== "Lain-lain") {
+          // Build a table of details
+          document.getElementById("syaratContent").innerHTML = `
+            <table class="modal-table">
+              <tr>
+                <th>Jenis Bantuan</th>
+                <td>${opt.value}</td>
+              </tr>
+              <tr>
+                <th>Syarat</th>
+                <td>${opt.dataset.syarat}</td>
+              </tr>
+              <tr>
+                <th>Umur Kelayakan</th>
+                <td>${opt.dataset.umur} tahun</td>
+              </tr>
+              <tr>
+                <th>Jumlah Agihan (RM)</th>
+                <td>${opt.dataset.jumlah}</td>
+              </tr>
+              <tr>
+                <th>Penerangan</th>
+                <td>${opt.dataset.penerangan}</td>
+              </tr>
+            </table>
+          `;
+          // Ensure the modal can scroll if content is long
+          const box = document.getElementById("syaratModal").querySelector(".modal-box");
+          box.style.maxHeight = "80vh";
+          box.style.overflowY = "auto";
+
+          document.getElementById("syaratModal").style.display = "flex";
+          lainLainField.required = false;
+        } else {
+          // Require the free‑text field only if “Lain‑lain”
+          lainLainField.required = (opt.value === "Lain-lain");
+        }
+      });
+
+      // 5) Tanggungan MyKad => auto-calc age on blur
+      document.getElementById("tanggunganMyKad").addEventListener("blur", function() {
+        const ic = this.value.trim();
+        const age = calculateAgeFromIC(ic);
+        document.getElementById("tanggunganUmur").value = age;
+      });
+
+      // 6) "OKAY" button in syaratModal to close the modal
+      document.getElementById("syaratOkBtn").addEventListener("click", function() {
+        document.getElementById("syaratModal").style.display = "none";
+      });
+
+      // 7) Toggle mobile navigation menu
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelector(".nav-links");
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function () {
+          navLinks.classList.toggle("active");
+        });
+      }
+    });
+
+    // Tanggungan (Dependents) logic
+    function tambahTanggungan() {
+      const nama = document.getElementById("tanggunganNama").value.trim();
+      const mykad = document.getElementById("tanggunganMyKad").value.trim();
+      let umur = calculateAgeFromIC(mykad);
+      umur = umur || "";
+      const hubungan = document.getElementById("tanggunganHubungan").value.trim();
+      const pendapatan = parseFloat(document.getElementById("tanggunganPendapatan").value) || 0;
+
+      if (!nama || !hubungan) {
+        alert("Sila isi sekurang-kurangnya Nama dan Hubungan tanggungan. (No. MyKad disarankan untuk pengiraan umur.)");
+        return;
+      }
+
+      const container = document.getElementById("senaraiTanggungan");
+
+      // Create a new row for the dependent details.
+      const row = document.createElement("div");
+      row.classList.add("tanggungan-row");
+      row.innerHTML = `
+        <span>${nama}</span>
+        <span>${mykad}</span>
+        <span>${umur}</span>
+        <span>${hubungan}</span>
+        <span>${pendapatan}</span>
+        <span><button class="remove-btn" onclick="padamTanggungan(this)">Padam</button></span>
+      `;
+      container.appendChild(row);
+
+      // Clear input fields
+      document.getElementById("tanggunganNama").value = "";
+      document.getElementById("tanggunganMyKad").value = "";
+      document.getElementById("tanggunganUmur").value = "";
+      document.getElementById("tanggunganHubungan").value = "";
+      document.getElementById("tanggunganPendapatan").value = "";
+
+      updateJumlahPendapatan();
+    }
+    function updateJumlahPendapatan() {
+      let total = 0;
+      document.querySelectorAll("#senaraiTanggungan .tanggungan-row")
+        .forEach(wrapper => {
+          const spans = wrapper.getElementsByTagName("span");
+          total += parseFloat(spans[4].textContent) || 0;
+        });
+      document.getElementById("jumlahPendapatan").textContent = total;
+    }
+
+    function padamTanggungan(btn) {
+      btn.parentElement.parentElement.remove();
+      // Optionally remove the header if no rows remain
+      const container = document.getElementById("senaraiTanggungan");
+      if (container.querySelectorAll(".tanggungan-row").length === 0) {
+        const header = container.querySelector(".tanggungan-header");
+        if (header) header.remove();
+      }
+    }
+
+    // Reset (clear) the form function
+    function resetForm() {
+      // Keep namaPemohon, noMykad, noTel (auto-filled)
+      // Clear other fields:
+      document.getElementById("umur").value = "";
+      const jantinaEls = document.getElementsByName("jantina");
+      for (var i = 0; i < jantinaEls.length; i++) {
+        jantinaEls[i].checked = false;
+      }
+      document.getElementById("pekerjaan").value = "";
+      document.getElementById("pendapatanKasar").selectedIndex = 0;
+      document.getElementById("statusPerkahwinan").selectedIndex = 0;
+      document.getElementById("alamat").value = "";
+      document.getElementById("poskod").value = "";
+      document.getElementById("bandar").value = "";
+      document.getElementById("adun").selectedIndex = 0;
+
+      document.getElementById("senaraiTanggungan").innerHTML = "";
+      document.getElementById("tanggunganNama").value = "";
+      document.getElementById("tanggunganMyKad").value = "";
+      document.getElementById("tanggunganUmur").value = "";
+      document.getElementById("tanggunganHubungan").value = "";
+      document.getElementById("jumlahPendapatan").textContent = "0";
+
+      document.getElementById("jenisBantuan").selectedIndex = 0;
+      document.getElementById("lainLain").value = "";
+      document.getElementById("lainLain").required = false; // reset
+      document.getElementById("huraianBantuan").value = "";
+
+      document.getElementById("mykadFile").value = "";
+      document.getElementById("okuFile").value = "";
+      document.getElementById("buktiPendapatan").value = "";
+      document.getElementById("dokumenTambahan").value = "";
+
+      document.getElementById("confirmCheck").checked = false;
+    }
+
+    // Main submission function
+    function submitForm() {
+      if (!document.getElementById("confirmCheck").checked) {
+        alert("Sila setuju dengan pengisytiharan dan persetujuan terlebih dahulu.");
+        return;
+      }
+
+      // Validate applicant details
+      const namaPemohon = document.getElementById("namaPemohon").value.trim();
+      const noMykad = document.getElementById("noMykad").value.trim();
+      const umur = document.getElementById("umur").value.trim();
+      const jantinaEls = document.getElementsByName("jantina");
+      let jantina = "";
+      for (let i = 0; i < jantinaEls.length; i++) {
+        if (jantinaEls[i].checked) {
+          jantina = jantinaEls[i].value;
+          break;
+        }
+      }
+      const noTel = document.getElementById("noTel").value.trim();
+      const pekerjaan = document.getElementById("pekerjaan").value.trim();
+      const pendapatanKasar = document.getElementById("pendapatanKasar").value;
+      const statusPerkahwinan = document.getElementById("statusPerkahwinan").value;
+
+      if (!namaPemohon || !noMykad || !umur || !jantina || !noTel || !pekerjaan || !pendapatanKasar || !statusPerkahwinan) {
+        alert("Sila isi semua maklumat pemohon.");
+        return;
+      }
+
+      // Address details
+      const alamat = document.getElementById("alamat").value.trim();
+      const poskod = document.getElementById("poskod").value.trim();
+      const bandar = document.getElementById("bandar").value.trim();
+      const adun = document.getElementById("adun").value.trim();
+      if (!alamat || !poskod || !bandar || !adun) {
+        alert("Sila isi alamat, poskod, bandar, dan ADUN.");
+        return;
+      }
+
+      // Tanggungan
+      const tanggunganElements = document.querySelectorAll("#senaraiTanggungan .tanggungan-row");
+      const tanggunganList = [];
+      tanggunganElements.forEach(function(wrapper) {
+        const spans = wrapper.getElementsByTagName("span");
+        const depName = spans[0].textContent.trim();
+        // Extract only the numeric part of MyKad (removing "No. MyKad :")
+        const depMykad = spans[1].textContent.replace(/No\. MyKad\s*:\s*/, "").trim();
+        const depUmur = spans[2].textContent.trim();
+        const depHubungan = spans[3].textContent.trim();
+        const pendapatan = parseFloat(spans[4].textContent.trim()) || 0;
+        if (depName && depHubungan) {
+          tanggunganList.push({
+            name: depName || "N/A",
+            mykad: depMykad || "N/A",
+            umur: depUmur || "N/A",
+            hubungan: depHubungan || "N/A",
+            pendapatan: pendapatan
+          });
+        }
+      });
+      
+      // Compute total pendapatan tanggungan
+      const totalPendapatanTanggungan = tanggunganList
+        .reduce((sum, d) => sum + (parseFloat(d.pendapatan) || 0), 0);
+
+      // Bantuan details
+      const jenisBantuan = document.getElementById("jenisBantuan").value;
+      const lainLain = document.getElementById("lainLain").value.trim();
+      const huraianBantuan = document.getElementById("huraianBantuan").value.trim();
+      if (!jenisBantuan) {
+        alert("Sila pilih jenis bantuan.");
+        return;
+      }
+      if (jenisBantuan === "Lain-lain" && !lainLain) {
+        alert("Sila nyatakan jenis bantuan yang diperlukan.");
+        return;
+      }
+      if (!huraianBantuan) {
+        alert("Sila berikan penerangan bagi bantuan yang diminta.");
+        return;
+      }
+
+      // File validations (MyKad required, others optional) <= 1MB
+      const maxSize = 1048576; // 1MB
+      const mykadFileInput = document.getElementById("mykadFile");
+      const okuFileInput = document.getElementById("okuFile");
+      const buktiPendapatanInput = document.getElementById("buktiPendapatan");
+      const dokumenTambahanInput = document.getElementById("dokumenTambahan");
+      const filesToUpload = {};
+
+      if (mykadFileInput.files.length > 0) {
+        const file = mykadFileInput.files[0];
+        if (file.size > maxSize) {
+          alert("Saiz fail MyKad melebihi 1MB.");
+          return;
+        }
+        filesToUpload.mykadFile = file;
+      } else {
+        alert("Sila muat naik salinan MyKad.");
+        return;
+      }
+
+      if (okuFileInput.files.length > 0) {
+        const file = okuFileInput.files[0];
+        if (file.size > maxSize) {
+          alert("Saiz fail Kad OKU melebihi 1MB.");
+          return;
+        }
+        filesToUpload.okuFile = file;
+      }
+      if (buktiPendapatanInput.files.length > 0) {
+        const file = buktiPendapatanInput.files[0];
+        if (file.size > maxSize) {
+          alert("Saiz fail Bukti Pendapatan melebihi 1MB.");
+          return;
+        }
+        filesToUpload.buktiPendapatan = file;
+      }
+      if (dokumenTambahanInput.files.length > 0) {
+        const file = dokumenTambahanInput.files[0];
+        if (file.size > maxSize) {
+          alert("Saiz fail Dokumen Tambahan melebihi 1MB.");
+          return;
+        }
+        filesToUpload.dokumenTambahan = file;
+      }
+
+      // Prepare common values
+      const now = new Date();
+      let formattedTimestamp = now.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      formattedTimestamp = formattedTimestamp.replace(/am|pm/g, match => match.toUpperCase());
+
+      // Build tanggungan object
+      const tanggunganObj = {};
+      tanggunganList.forEach(function(dep) {
+        const key = dep.mykad ? dep.mykad : dep.name;
+        tanggunganObj[key] = dep;
+      });
+
+      // Build formData without dokumen (to be updated after successful file uploads)
+      const formData = {
+        pemohon: {
+          nama: namaPemohon,
+          noMykad: noMykad,
+          umur: umur,
+          jantina: jantina,
+          noTel: noTel,
+          pekerjaan: pekerjaan,
+          pendapatanKasar: pendapatanKasar,
+          statusPerkahwinan: statusPerkahwinan,
+          alamat: alamat,
+          poskod: poskod,
+          bandar: bandar,
+          adun: adun
+        },
+        tanggungan: tanggunganList.reduce((obj, dep) => {
+          const key = dep.mykad || dep.name;
+          obj[key] = dep;
+          return obj;
+        }, {}),
+        totalPendapatanTanggungan,
+        bantuan: {
+          jenis: jenisBantuan,
+          lainLain: lainLain,
+          huraian: huraianBantuan
+        },
+        sumberData: programKebajikanVal || "N/A",
+        applicationStatus: "Permohonan telah Dihantar",
+        applicationStatusTimestamps: {
+          "Permohonan telah Dihantar": formattedTimestamp
+        },
+        timestamp: formattedTimestamp
+      };
+
+      // ----- CHANGED PART: Use push() to store under a unique application ID -----
+      var newAppRef = firebase.database().ref('permohonan/').push();
+      newAppRef.set(formData, function(error) {
+        if (error) {
+          alert("Gagal menghantar permohonan. Sila cuba lagi.");
+          console.error("Error pushing data: ", error);
+        } else {
+          // Only after successful submission, upload files (if any)
+          if (Object.keys(filesToUpload).length > 0) {
+            const storageRef = firebase.storage().ref();
+            const uploadPromises = [];
+            const fileUrls = {};
+
+            for (let key in filesToUpload) {
+              if (filesToUpload.hasOwnProperty(key)) {
+                let file = filesToUpload[key];
+                let timestamp = Date.now();
+                let extension = file.name.split('.').pop();
+                let filename = key + "_" + timestamp + "." + extension;
+                let fileRef = storageRef.child("permohonan/" + filename);
+                let promise = fileRef.put(file)
+                  .then(function(snapshot) {
+                    return snapshot.ref.getDownloadURL();
+                  })
+                  .then(function(downloadURL) {
+                    fileUrls[key] = downloadURL;
+                  });
+                uploadPromises.push(promise);
+              }
+            }
+
+            Promise.all(uploadPromises).then(function() {
+              // Update the database record with file URLs using the unique application ID
+              newAppRef.update({dokumen: fileUrls}, function(updateError) {
+                if (updateError) {
+                  alert("Gagal memuat naik fail selepas permohonan dihantar.");
+                  console.error("Error updating file URLs: ", updateError);
+                } else {
+                  alert("Permohonan telah dihantar.");
+                  window.location.href = "dashboard.html";
+                }
+              });
+            }).catch(function(error) {
+              console.error("Error uploading files: ", error);
+              alert("Gagal memuat naik fail. Sila cuba lagi.");
+            });
+          } else {
+            // If no files to upload, finish submission
+            alert("Permohonan telah dihantar.");
+            window.location.href = "dashboard.html";
+          }
+        }
+      });
+      // ---------------------------------------------------------------------------
+    }
+  </script>
+</body>
+</html>

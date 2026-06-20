@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pentadbir Sistem - Kemaskini Pengguna</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Check if the admin's email is stored in localStorage
+    if (!localStorage.getItem("userEmail")) {
+      alert("Sila log masuk sebagai Pentadbir.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <style>
+    /* ====== GLOBAL RESET ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to right, #f9f9f9, #fefefe);
+      overflow: hidden;
+    }
+    /* ====== HEADER (TOP BLACK BAR) ====== */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: black;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      font-family: 'Times New Roman', serif;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-left img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    .header-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-links a:hover {
+      background: white;
+      color: #2c1e3c;
+      border-radius: 15px;
+      padding: 10px 20px;
+    }
+    .logout-btn {
+      background: #bc0a0f;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .logout-btn:hover {
+      background: grey !important;
+      color: white !important;
+    }
+    .logout-btn::before {
+      content: "";
+      display: inline-block;
+      background: url('images/logout.png') no-repeat center center;
+      background-size: contain;
+      width: 25px;
+      height: 25px;
+      margin-right: 8px;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-wrap: wrap;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: black;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        margin: 10px 0;
+        padding: 10px 20px;
+        width: 50%;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+    /* ====== SIDEBAR + MAIN WRAPPER ====== */
+    .admin-wrapper {
+      display: flex;
+      height: 100vh;
+      margin-top: 60px;
+    }
+    /* ====== SIDEBAR ====== */
+    .sidebar {
+      width: 220px;
+      background: #454545;
+      color: #fff;
+      padding: 20px 0;
+      border-right: 2px solid #ccc;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .admin-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .admin-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ddd;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .admin-avatar img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+    .admin-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .sidebar-menu {
+      width: 100%;
+      list-style: none;
+      padding: 0 10px;
+    }
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-left: 4px solid transparent;
+      transition: background 0.3s, border-left 0.3s;
+      font-size: 16px;
+    }
+    .sidebar-menu a:hover {
+      background: #bc0a0f;
+      color: white;
+      border-left: 4px solid #ccc;
+    }
+    .sidebar-menu a img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+    }
+    .sidebar-divider {
+      width: 150%;
+      border-top: 3px solid #ccc;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+    /* ====== MAIN CONTENT ====== */
+    .main-content {
+      flex: 1;
+      padding: 20px 40px;
+      background: linear-gradient(to right, #fff, #f2f5f9);
+      position: relative;
+      overflow-y: auto;
+    }
+    .welcome-text {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .welcome-text img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+    .page-title {
+      margin-top: 35px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    .sub-heading {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #333;
+      margin-top: 25px;
+    }
+    .dotted-line {
+      width: 100%;
+      border-top: 2px dotted #999;
+      margin: 35px 0;
+    }
+    /* ====== USER ENTRY DISPLAY ====== */
+    .user-entry {
+      background: #fdfdfd;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .user-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+    .user-info span {
+      font-weight: 600;
+    }
+    .user-info input {
+      border: none;
+      background: transparent;
+      font-weight: 500;
+      color: #333;
+      width: auto;
+    }
+    .user-info input:disabled {
+      color: #333;
+      cursor: default;
+    }
+    .edit-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .edit-btn img {
+      width: 34px;
+      height: 34px;
+    }
+    /* ====== MODAL STYLES ====== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px 30px;
+      border-radius: 10px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: #333;
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .modal-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    .modal-row label {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .modal-row input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .modal-submit {
+      background: #bc0a0f;
+      color: #fff;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 14px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .modal-submit:hover {
+      background: #333;
+    }
+    /* ====== FOOTER ====== */
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 14px;
+      z-index: 999;
+    }
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 768px) {
+      .admin-wrapper {
+        flex-direction: column;
+        height: auto;
+        margin-top: 110px;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #ccc;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .main-content {
+        padding: 10px 20px;
+      }
+      .user-info {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="admindashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pentadbir">
+        </div>
+        <div class="admin-name">Pentadbir Sistem</div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#"><img src="images/menu-user.png" alt="">Urus Pengguna</a></li>
+        <li style="margin-left: 35px;">
+          <ul>
+            <li><a href="admindashboard.html"><img src="images/add-icon.png" alt="">Tambah</a></li>
+            <li><a href="adminedit.html"><img src="images/edit-icon.png" alt="">Kemaskini</a></li>
+            <li><a href="admindelete.html"><img src="images/delete-icon.png" alt="">Padam</a></li>
+          </ul>
+        </li>
+        <li><a href="adminfeedback.html"><img src="images/menu-feedback.png" alt="">Urus Maklum Balas</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span>Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- Page Title -->
+      <div class="page-title">Kemaskini Pengguna</div>
+
+      <!-- Pegawai Kebajikan Section -->
+      <div class="sub-heading">Pegawai Kebajikan :</div>
+      <div id="pegawaiContainer" style="margin-left: 100px; margin-right: 100px;"></div>
+
+      <!-- Dotted line -->
+      <div class="dotted-line"></div>
+
+      <!-- Wakil ADUN Section -->
+      <div class="sub-heading">Wakil ADUN :</div>
+      <div id="adunContainer" style="margin-left: 100px; margin-right: 100px;"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- ====== MODAL DIALOG FOR EDITING ====== -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div class="modal-title">Edit Pengguna</div>
+      <input type="hidden" id="editUserKey">
+      <input type="hidden" id="editUserType">
+
+      <!-- Now both Pegawai & ADUN will have Username -->
+      <div class="modal-row">
+        <label for="editEmail">Email Pengguna:</label>
+        <input type="text" id="editEmail">
+      </div>
+      <div class="modal-row" id="usernameRow">
+        <label for="editUsername">ADUN :</label>
+        <input type="text" id="editUsername">
+      </div>
+      <div class="modal-row">
+        <label for="editPassword">Password:</label>
+        <input type="text" id="editPassword">
+      </div>
+      <button class="modal-submit" onclick="saveEdit()">Simpan</button>
+    </div>
+  </div>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="logout.js"></script>
+  <script src="firebaseConfig.js"></script>
+
+  <script>
+    // Toggle nav for mobile
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelector(".nav-links");
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function () {
+          navLinks.classList.toggle("active");
+        });
+      }
+    });
+
+    var database = firebase.database();
+
+    // On page load, fetch all Pegawai & Wakil ADUN data
+    window.onload = function() {
+      loadPegawaiKebajikan();
+      loadWakilAdun();
+    };
+
+    // Load Pegawai Kebajikan
+    function loadPegawaiKebajikan() {
+      const pegawaiContainer = document.getElementById("pegawaiContainer");
+      pegawaiContainer.innerHTML = "";
+
+      database.ref("Users/pegawai_kebajikan").once("value", snapshot => {
+        let index = 1;
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          // Create a user-entry div
+          const entryDiv = document.createElement("div");
+          entryDiv.className = "user-entry";
+
+          const userInfo = document.createElement("div");
+          userInfo.className = "user-info";
+
+          // Numbering
+          const numberSpan = document.createElement("span");
+          numberSpan.textContent = index + ". ";
+          userInfo.appendChild(numberSpan);
+
+          // Email label + disabled input
+          const emailLabel = document.createElement("span");
+          emailLabel.textContent = "Email Pengguna : ";
+          userInfo.appendChild(emailLabel);
+
+          const emailInput = document.createElement("input");
+          emailInput.type = "text";
+          emailInput.value = data.email || "";
+          emailInput.disabled = true;
+          userInfo.appendChild(emailInput);
+
+          // NEW: Username label + disabled input
+          const usernameLabel = document.createElement("span");
+          usernameLabel.textContent = "ADUN : ";
+          userInfo.appendChild(usernameLabel);
+
+          const usernameInput = document.createElement("input");
+          usernameInput.type = "text";
+          usernameInput.value = data.username || "";
+          usernameInput.disabled = true;
+          userInfo.appendChild(usernameInput);
+
+          // Password label + disabled input
+          const pwdLabel = document.createElement("span");
+          pwdLabel.textContent = "Password : ";
+          userInfo.appendChild(pwdLabel);
+
+          const pwdInput = document.createElement("input");
+          pwdInput.type = "text";
+          pwdInput.value = data.password || "";
+          pwdInput.disabled = true;
+          userInfo.appendChild(pwdInput);
+
+          entryDiv.appendChild(userInfo);
+
+          // Edit button
+          const editButton = document.createElement("button");
+          editButton.className = "edit-btn";
+          editButton.innerHTML = '<img src="images/edit.png" alt="Edit" style="width: 34px; height: 34px;">';
+          // Pass the username to the edit dialog
+          editButton.onclick = () => openEditDialog("pegawai", key, data.email, data.password, data.username);
+          entryDiv.appendChild(editButton);
+
+          pegawaiContainer.appendChild(entryDiv);
+          index++;
+        });
+      });
+    }
+
+    // Load Wakil ADUN
+    function loadWakilAdun() {
+      const adunContainer = document.getElementById("adunContainer");
+      adunContainer.innerHTML = "";
+
+      database.ref("Users/wakil_adun").once("value", snapshot => {
+        let index = 1;
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          const entryDiv = document.createElement("div");
+          entryDiv.className = "user-entry";
+
+          const userInfo = document.createElement("div");
+          userInfo.className = "user-info";
+
+          const numberSpan = document.createElement("span");
+          numberSpan.textContent = index + ". ";
+          userInfo.appendChild(numberSpan);
+
+          // Email label + disabled input
+          const emailLabel = document.createElement("span");
+          emailLabel.textContent = "Email : ";
+          userInfo.appendChild(emailLabel);
+
+          const emailInput = document.createElement("input");
+          emailInput.type = "text";
+          emailInput.value = data.email || "";
+          emailInput.disabled = true;
+          userInfo.appendChild(emailInput);
+
+          // Username label + disabled input
+          const usernameLabel = document.createElement("span");
+          usernameLabel.textContent = "ADUN : ";
+          userInfo.appendChild(usernameLabel);
+
+          const usernameInput = document.createElement("input");
+          usernameInput.type = "text";
+          usernameInput.value = data.username || "";
+          usernameInput.disabled = true;
+          userInfo.appendChild(usernameInput);
+
+          // Password label + disabled input
+          const pwdLabel = document.createElement("span");
+          pwdLabel.textContent = "Password : ";
+          userInfo.appendChild(pwdLabel);
+
+          const pwdInput = document.createElement("input");
+          pwdInput.type = "text";
+          pwdInput.value = data.password || "";
+          pwdInput.disabled = true;
+          userInfo.appendChild(pwdInput);
+
+          entryDiv.appendChild(userInfo);
+
+          // Edit button
+          const editButton = document.createElement("button");
+          editButton.className = "edit-btn";
+          editButton.innerHTML = '<img src="images/edit.png" alt="Edit" style="width: 34px; height: 34px;">';
+          editButton.onclick = () => openEditDialog("adun", key, data.email, data.password, data.username);
+          entryDiv.appendChild(editButton);
+
+          adunContainer.appendChild(entryDiv);
+          index++;
+        });
+      });
+    }
+
+    // Open the modal dialog to edit
+    function openEditDialog(userType, key, email, password, username) {
+      document.getElementById("editUserKey").value = key;
+      document.getElementById("editUserType").value = userType;
+      document.getElementById("editEmail").value = email || "";
+      document.getElementById("editPassword").value = password || "";
+      document.getElementById("editUsername").value = username || "";
+      // Always display the username row now for both user types
+      document.getElementById("usernameRow").style.display = "flex";
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    // Close the modal
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
+
+    // Save edited data
+    function saveEdit() {
+      const key = document.getElementById("editUserKey").value;
+      const userType = document.getElementById("editUserType").value;
+      const email = document.getElementById("editEmail").value.trim();
+      const password = document.getElementById("editPassword").value.trim();
+      const username = document.getElementById("editUsername").value.trim();
+
+      if (!email || !password || !username) {
+        alert("Sila isi maklumat dengan lengkap.");
+        return;
+      }
+
+      let updates = {
+        email: email,
+        password: password,
+        updatedAt: new Date().toString(),
+        username: username
+      };
+
+      let refPath = userType === "pegawai" ? "Users/pegawai_kebajikan/" : "Users/wakil_adun/";
+      database.ref(refPath + key)
+        .update(updates)
+        .then(() => {
+          alert("Maklumat berjaya dikemaskini!");
+          closeModal();
+          if (userType === "pegawai") {
+            loadPegawaiKebajikan();
+          } else {
+            loadWakilAdun();
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating user:", error);
+          alert("Ralat! Tidak dapat mengemaskini maklumat.");
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pegawai Kebajikan - Pengumuman</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="css/pengumuman.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="pegawaiDashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pegawai Kebajikan">
+        </div>
+        <div class="admin-name">
+          Pegawai Kebajikan
+          <br>
+          <span id="pegawaiUsername" style="font-size:14px; font-weight:normal;"></span>
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="pegawaiDashboard.html"><img src="images/application.png" alt="">Senarai Permohonan</a>
+          <li style="margin-left:35px;"><ul>
+            <li><a href="pegawaiPending.html"><img src="images/proses.png" alt="Proses">Proses</a></li>
+            <li><a href="pegawaiLulus.html"><img src="images/lulus.png" alt="Lulus">Lulus</a></li>
+            <li><a href="pegawaiTolak.html"><img src="images/tolak.png" alt="Ditolak">Ditolak</a></li>
+            <li><a href="pegawaiDiagih.html"><img src="images/agih.png" alt="Diagihkan">Diagihkan</a></li>
+          </ul></li>
+        </li>
+        <li><a href="pegawaiMaklumat.html"><img src="images/menu-kebajikan.png" alt="maklumat">Urus Maklumat Kebajikan</a></li>
+        <li><a href="pegawaiUrus.html"><img src="images/menu-elderly.png" alt="UrusData">Urus Data Warganegara</a></li>
+        <li><a href="pegawaiPengumuman.html"><img src="images/menu-announcement.png" alt="Pengumuman">Pengumuman</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- PAGE TITLE -->
+      <h2 class="page-title">Pengumuman</h2>
+
+      <!-- ANNOUNCEMENTS SECTION -->
+      <div class="announcement-container">
+        <!-- Existing announcements will be displayed here -->
+        <div id="announcementList" class="announcement-list">
+          <!-- Dynamically loaded announcements (with Edit & Delete icons) -->
+        </div>
+      </div>
+
+      <div class="dotted-line"></div>
+
+      <!-- ADD NEW ANNOUNCEMENT SECTION -->
+      <div class="sub-heading">Tambah Pengumuman :</div>
+      <div class="add-announcement-form">
+        <div class="input-row">
+          <label for="newPengumuman">Tulis Pengumuman Baru :</label>
+          <textarea id="newPengumuman" rows="3" placeholder="Contoh: Pengumuman berkaitan dengan AdunKasih"></textarea>
+        </div>
+        <button id="btnMuatNaik">MUAT NAIK</button>
+      </div>
+
+    </div> <!-- END MAIN CONTENT -->
+  </div> <!-- END WRAPPER -->
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- ====== EDIT MODAL ====== -->
+  <div class="modal" id="editModal">
+    <div class="modal-box">
+      <span class="modal-close" id="editModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/edit.png" alt="Edit Icon" class="modal-icon">
+        <h2 class="modal-title">KEMASKINI PENGUMUMAN</h2>
+      </div>
+
+      <div class="modal-field">
+        <textarea id="editPengumuman" rows="4"></textarea>
+      </div>
+
+      <button class="modal-btn-lulus" id="btnEditConfirm">SIMPAN</button>
+    </div>
+  </div>
+
+  <!-- ====== DELETE CONFIRMATION MODAL ====== -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-box">
+      <span class="modal-close" id="deleteModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/warning.png" alt="Warning Icon" class="modal-icon">
+        <h2 class="modal-title">PADAM PENGUMUMAN</h2>
+      </div>
+      <p class="modal-status">
+        Adakah anda pasti untuk memadam pengumuman ini?
+      </p>
+      <button class="modal-btn-lulus" id="btnDeleteConfirm">PADAM</button>
+    </div>
+  </div>
+
+  <!-- LOGOUT SCRIPT -->
+  <script src="logout.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="firebaseConfig.js"></script>
+  
+
+  <script>
+        // 1. Check login
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai Pegawai Kebajikan.");
+      window.location.href = "login.html";
+    }
+    var database = firebase.database();
+
+    let currentADUN = "";
+    let currentEditKey = null;   // to store the key of the announcement we are editing
+    let currentDeleteKey = null; // to store the key of the announcement we are deleting
+
+    // 3. Retrieve pegawai username and set currentADUN
+    database.ref("Users/pegawai_kebajikan").once("value")
+      .then(snapshot => {
+        let foundUser = false;
+        snapshot.forEach(child => {
+          const data = child.val();
+          if (data.email === localStorage.getItem("userEmail")) {
+            foundUser = true;
+            currentADUN = data.username || "";
+            document.getElementById("pegawaiUsername").textContent = currentADUN;
+            document.getElementById("welcomeMsg").textContent =
+              "Selamat Datang ke ADUNKasih @ Kedah, " + (currentADUN || "Pegawai");
+          }
+        });
+        if (!foundUser) {
+          alert("Rekod pegawai tidak dijumpai dalam pangkalan data!");
+        }
+      })
+      .catch(error => {
+        console.error("Ralat ketika memuatkan data Pegawai:", error);
+      });
+
+    // 4. Load existing announcements
+    function loadAnnouncements() {
+      const announcementList = document.getElementById("announcementList");
+      announcementList.innerHTML = ""; // Clear current list
+
+      database.ref("pengumuman").once("value", snapshot => {
+        snapshot.forEach(child => {
+          const data = child.val();
+          const key = child.key;
+
+          // Create a container for each announcement
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "announcement-item";
+
+          // The left side: icon + text
+          const leftDiv = document.createElement("div");
+          leftDiv.className = "announcement-left";
+
+          // Announcement icon
+          const iconImg = document.createElement("img");
+          iconImg.src = "images/announce.png";
+          iconImg.alt = "Announcement Icon";
+          iconImg.className = "announcement-icon";
+
+          // Announcement text
+          const textDiv = document.createElement("div");
+          textDiv.className = "announcement-text";
+          textDiv.textContent = data.teksPengumuman || "";
+
+          leftDiv.appendChild(iconImg);
+          leftDiv.appendChild(textDiv);
+
+          // Actions container (edit/delete)
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "announcement-actions";
+
+          // Edit icon
+          const editIcon = document.createElement("img");
+          editIcon.src = "images/edit.png";
+          editIcon.alt = "Edit";
+          editIcon.className = "action-icon";
+          editIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openEditModal(key, data);
+          });
+
+          // Delete icon
+          const deleteIcon = document.createElement("img");
+          deleteIcon.src = "images/delete.png";
+          deleteIcon.alt = "Delete";
+          deleteIcon.className = "action-icon";
+          deleteIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openDeleteModal(key);
+          });
+
+          // Append icons to actions div
+          actionsDiv.appendChild(editIcon);
+          actionsDiv.appendChild(deleteIcon);
+
+          // Append left side + actions to itemDiv
+          itemDiv.appendChild(leftDiv);
+          itemDiv.appendChild(actionsDiv);
+
+          // Append to announcementList
+          announcementList.appendChild(itemDiv);
+        });
+      });
+    }
+
+    // 5. Add new announcement
+    document.getElementById("btnMuatNaik").onclick = function() {
+      const teksPengumuman = document.getElementById("newPengumuman").value.trim();
+
+      if (!teksPengumuman) {
+        alert("Sila isi teks pengumuman sebelum memuat naik.");
+        return;
+      }
+
+      const now = new Date();
+      const tarikhKemaskini = formatDate(now);
+
+      // Push to Firebase
+      const newRef = database.ref("pengumuman").push();
+      newRef.set({
+        teksPengumuman: teksPengumuman,
+        tarikhKemaskini: tarikhKemaskini
+      })
+      .then(() => {
+        alert("Pengumuman berjaya ditambah!");
+        document.getElementById("newPengumuman").value = "";
+        loadAnnouncements();
+      })
+      .catch(error => {
+        console.error("Ralat semasa menambah pengumuman:", error);
+      });
+    };
+
+    // 6. Open Edit Modal
+    function openEditModal(key, data) {
+      currentEditKey = key;
+      document.getElementById("editPengumuman").value = data.teksPengumuman || "";
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    // Close Edit Modal
+    document.getElementById("editModalClose").onclick = function() {
+      document.getElementById("editModal").style.display = "none";
+    };
+
+    // 7. Confirm Edit
+    document.getElementById("btnEditConfirm").onclick = function() {
+      const updatedTeks = document.getElementById("editPengumuman").value.trim();
+      if (!updatedTeks) {
+        alert("Teks pengumuman tidak boleh kosong.");
+        return;
+      }
+
+      const tarikhKemaskini = formatDate(new Date());
+      const updates = {
+        teksPengumuman: updatedTeks,
+        tarikhKemaskini: tarikhKemaskini
+      };
+
+      database.ref("pengumuman/" + currentEditKey).update(updates)
+        .then(() => {
+          alert("Pengumuman berjaya dikemaskini!");
+          document.getElementById("editModal").style.display = "none";
+          loadAnnouncements();
+        })
+        .catch(error => {
+          console.error("Ralat semasa mengemas kini pengumuman:", error);
+        });
+    };
+
+    // 8. Open Delete Modal
+    function openDeleteModal(key) {
+      currentDeleteKey = key;
+      document.getElementById("deleteModal").style.display = "flex";
+    }
+
+    // Close Delete Modal
+    document.getElementById("deleteModalClose").onclick = function() {
+      document.getElementById("deleteModal").style.display = "none";
+    };
+
+    // 9. Confirm Delete
+    document.getElementById("btnDeleteConfirm").onclick = function() {
+      if (!currentDeleteKey) return;
+      database.ref("pengumuman/" + currentDeleteKey).remove()
+        .then(() => {
+          alert("Pengumuman berjaya dipadam.");
+          document.getElementById("deleteModal").style.display = "none";
+          loadAnnouncements();
+        })
+        .catch(error => {
+          console.error("Ralat semasa memadam pengumuman:", error);
+        });
+    };
+
+    // 10. Utility function: format date as DD/MM/YYYY
+    function formatDate(dateObj) {
+      const day = ("0" + dateObj.getDate()).slice(-2);
+      const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+      const year = dateObj.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    // 11. On page load
+    window.onload = function() {
+      loadAnnouncements();
+    };
+  </script>
+</body>
+</html>

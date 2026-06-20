@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADUN Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase SDK (v8.x) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Your Firebase config -->
+  <script src="firebaseConfig.js"></script>
+
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="css/adundashboard.css">
+</head>
+<body>
+  <!-- Check if userEmail is present -->
+  <script>
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai ADUN.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <!-- HEADER (Static Title) -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo 1">
+      <img src="images/logo2.png" alt="Logo 2">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="adundashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <!-- Logout is handled by logout.js -->
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Wakil ADUN">
+        </div>
+        <div class="admin-name" id="adunSidebarName">
+          <!-- We'll set this via JS after fetching from DB -->
+          Loading...
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="adundashboard.html"><img src="images/Graphs.png" alt=""> Graf Agihan</a></li>
+        <li><a href="adunPending.html"><img src="images/proses.png" alt="">Permohonan Proces</a></li>
+        <li><a href="maklumatPeruntukan.html"><img src="images/money.png" alt="">Maklumat Peruntukan</a></li>
+        <li><a href="adunReport.html"><img src="images/report.png" alt=""> Laporan</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <h2 class="page-title">Papan Pemuka Agihan Bantuan</h2>
+
+      <!-- 5 Status Boxes -->
+      <div class="stats-container">
+        <div class="stat-box" style="background: #00a878;">
+          <div class="stat-title">Jumlah yang Lulus</div>
+          <div class="stat-value" id="countLulus">0</div>
+        </div>
+        <div class="stat-box" style="background: #3b82f6;">
+          <div class="stat-title">Jumlah dalam Proses</div>
+          <div class="stat-value" id="countProses">0</div>
+        </div>
+        <div class="stat-box" style="background: #ef4444;">
+          <div class="stat-title">Jumlah yang Ditolak</div>
+          <div class="stat-value" id="countTolak">0</div>
+        </div>
+        <div class="stat-box" style="background: #8c04cf;">
+          <div class="stat-title">Jumlah yang Diagih</div>
+          <div class="stat-value" id="countAgih">0</div>
+        </div>
+        <div class="stat-box" style="background: #f59e0b;">
+          <div class="stat-title">Jumlah yang Mohon</div>
+          <div class="stat-value" id="countMohon">0</div>
+        </div>
+      </div>
+
+      <!-- SECTION: LINE CHART -->
+      <h3 class="chart-title">Graf Status Permohonan</h3>
+      <div class="chart-container">
+        <div class="chart-filters">
+          <label for="statusFilter">Pilih Status:</label>
+          <select id="statusFilter">
+            <option value="all">Papar Semua (Lulus, Dalam Proses, Ditolak, Agih, Mohon)</option>
+            <option value="Lulus">Jumlah yang Lulus</option>
+            <option value="Dalam Proses">Jumlah yang Dalam Proses</option>
+            <option value="Ditolak">Jumlah yang Ditolak</option>
+            <option value="Agih">Jumlah yang Diagih</option>
+            <option value="Mohon">Jumlah yang Mohon (Total)</option>
+          </select>
+
+          <label for="yearFilterLine">Tahun:</label>
+          <select id="yearFilterLine">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <canvas id="lineChart" width="600" height="300"></canvas>
+      </div>
+
+      <!-- SECTION: BAR CHART -->
+      <h3 class="chart-title">Graf Jenis Bantuan</h3>
+      <div class="chart-container">
+        <div class="chart-filters">
+          <label for="yearFilterBar">Tahun:</label>
+          <select id="yearFilterBar">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <canvas id="barChart" width="600" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- Modal for Lain-lain details -->
+  <div id="modalLainLain" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <img src="images/welfare.png" alt="Welfare Icon" class="modal-icon">
+      <h3>Maklumat Bantuan Lain-lain</h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- MAIN SCRIPT -->
+  <script>
+    // Initialize Firebase
+    var db = firebase.database();
+
+    // Global data structures
+    let lineDataRaw = {};   
+    let barDataRaw = {};    
+    let lainLainDetailsByYear = {};
+
+    let countLulus = 0, countProses = 0, countTolak = 0, countAgih = 0;
+    let lineChart, barChart;
+
+    // We'll store the final ADUN name here after we fetch it from DB
+    let currentAdunName = "ADUN"; 
+
+    document.addEventListener("DOMContentLoaded", async function() {
+      try {
+        // 1) Get userEmail from localStorage
+        const userEmail = localStorage.getItem("userEmail");
+
+        // 2) Query Users/wakil_adun to get the ADUN's username
+        const wakilSnap = await db.ref("Users/wakil_adun")
+          .orderByChild("email")
+          .equalTo(userEmail)
+          .once("value");
+
+        if (wakilSnap.exists()) {
+          // We'll assume there's only one child matching the email
+          wakilSnap.forEach(child => {
+            const userData = child.val();
+            // userData.username is the ADUN's name
+            if (userData.username) {
+              currentAdunName = userData.username;
+            }
+          });
+        } else {
+          console.warn("Tiada rekod wakil_adun yang padan dengan email ini:", userEmail);
+        }
+
+        // 3) Update the UI with the ADUN's name
+        document.getElementById("adunSidebarName").textContent = currentAdunName;
+        document.getElementById("welcomeMsg").textContent =
+          "Selamat Datang ke ADUNKasih @ Kedah, " + currentAdunName;
+
+        // 4) Now fetch permohonan data
+        const permSnap = await db.ref("permohonan").once("value");
+        const permData = permSnap.val() || {};
+
+        // 5) Fetch welfare types from jenisKebajikan
+        const jenisSnap = await db.ref("jenisKebajikan").once("value");
+        const jenisData = jenisSnap.val() || {};
+        let welfareTypes = {};
+        Object.keys(jenisData).forEach(key => {
+          let item = jenisData[key];
+          if (item.jenisBantuan) {
+            welfareTypes[item.jenisBantuan] = 0;
+          }
+        });
+
+        // 6) Build year dropdowns
+        populateYearDropdown("yearFilterLine", 2025, 2030);
+        populateYearDropdown("yearFilterBar", 2025, 2030);
+
+        // 7) Process each permohonan record, only if pemohon.adun == currentAdunName
+        Object.keys(permData).forEach(key => {
+          const p = permData[key];
+          if (!p.pemohon || p.pemohon.adun !== currentAdunName) return;
+
+          // Map applicationStatus
+          let mappedStatus = "Dalam Proses";
+          if (p.applicationStatus === "Permohonan Diluluskan") {
+            mappedStatus = "Lulus"; countLulus++;
+          } else if (
+            p.applicationStatus === "Permohonan Ditolak" ||
+            p.applicationStatus === "Permohonan Dibatalkan"
+          ) {
+            mappedStatus = "Ditolak"; countTolak++;
+          } else if (p.applicationStatus === "Bantuan telah Diagihkan") {
+            mappedStatus = "Agih"; countAgih++;
+          } else if (
+            p.applicationStatus === "Maklumat Permohonan Dalam Semakan" ||
+            p.applicationStatus === "Dalam Proses Kelulusan" ||
+            p.applicationStatus === "Dokumen Sokongan Dalam Semakan" ||
+            p.applicationStatus === "Permohonan dan Dokumen Diterima" ||
+            p.applicationStatus === "Permohonan telah Dihantar"
+          ) {
+            mappedStatus = "Dalam Proses";
+            countProses++;
+          }
+
+          // Parse date for year/month
+          let firstTs = null;
+          if (p.applicationStatusTimestamps) {
+            for (let k in p.applicationStatusTimestamps) {
+              firstTs = p.applicationStatusTimestamps[k];
+              break;
+            }
+          }
+          let { year, month } = parseDateYearMonth(firstTs);
+          if (!year) return;
+
+          if (!lineDataRaw[year]) lineDataRaw[year] = {};
+          if (!lineDataRaw[year][month]) {
+            lineDataRaw[year][month] = {
+              Lulus: 0, "Dalam Proses": 0, Ditolak: 0, Agih: 0
+            };
+          }
+          lineDataRaw[year][month][mappedStatus]++;
+
+          // For bar chart
+          let jenisVal = "Lain-lain";
+          if (p.bantuan && p.bantuan.jenis && welfareTypes.hasOwnProperty(p.bantuan.jenis)) {
+            jenisVal = p.bantuan.jenis;
+          } else {
+            // Store extra details in lainLainDetailsByYear
+            if (!lainLainDetailsByYear[year]) {
+              lainLainDetailsByYear[year] = [];
+            }
+            if (p.bantuan && p.bantuan.lainLain) {
+              lainLainDetailsByYear[year].push(p.bantuan.lainLain);
+            } else {
+              lainLainDetailsByYear[year].push("Tiada maklumat tambahan");
+            }
+          }
+
+          if (!barDataRaw[year]) {
+            barDataRaw[year] = {};
+            // Initialize known welfare types
+            Object.keys(welfareTypes).forEach(wt => {
+              barDataRaw[year][wt] = 0;
+            });
+            barDataRaw[year]["Lain-lain"] = 0;
+          }
+          if (barDataRaw[year].hasOwnProperty(jenisVal)) {
+            barDataRaw[year][jenisVal]++;
+          } else {
+            barDataRaw[year]["Lain-lain"]++;
+          }
+        });
+
+        // 8) Update counters
+        let countMohon = countLulus + countProses + countTolak + countAgih;
+        document.getElementById("countLulus").textContent = countLulus;
+        document.getElementById("countProses").textContent = countProses;
+        document.getElementById("countTolak").textContent = countTolak;
+        document.getElementById("countAgih").textContent = countAgih;
+        document.getElementById("countMohon").textContent = countMohon;
+
+        // 9) Initialize charts
+        const defaultYearLine = document.getElementById("yearFilterLine").value;
+        initLineChart("all", defaultYearLine);
+
+        const defaultYearBar = document.getElementById("yearFilterBar").value;
+        initBarChart(defaultYearBar);
+
+        // 10) Chart filter event listeners
+        document.getElementById("statusFilter").addEventListener("change", function() {
+          initLineChart(this.value, document.getElementById("yearFilterLine").value);
+        });
+        document.getElementById("yearFilterLine").addEventListener("change", function() {
+          initLineChart(document.getElementById("statusFilter").value, this.value);
+        });
+        document.getElementById("yearFilterBar").addEventListener("change", function() {
+          initBarChart(this.value);
+        });
+
+      } catch (err) {
+        console.error("Ralat memuatkan data ADUN / permohonan:", err);
+      }
+    });
+
+    // Populate a dropdown with year options
+    function populateYearDropdown(dropdownId, startYear, endYear) {
+      const selectEl = document.getElementById(dropdownId);
+      for (let y = startYear; y <= endYear; y++) {
+        const opt = document.createElement("option");
+        opt.value = String(y);
+        opt.textContent = String(y);
+        selectEl.appendChild(opt);
+      }
+    }
+
+    // Parse date string => { year, month }
+    function parseDateYearMonth(dateStr) {
+      if (!dateStr) return { year: null, month: null };
+      dateStr = dateStr.replace(',', '').replace(/-/g, '/');
+      let parts = dateStr.split(' ');
+      if (!parts[0]) return { year: null, month: null };
+      let dparts = parts[0].split('/');
+      if (dparts.length < 3) return { year: null, month: null };
+      return { year: dparts[2], month: dparts[1] };
+    }
+
+    // ========== LINE CHART ==========
+    function initLineChart(statusFilter, yearFilter) {
+      if (lineChart) lineChart.destroy();
+      const ctx = document.getElementById("lineChart").getContext("2d");
+
+      let labels = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+      let yearData = lineDataRaw[yearFilter] || {};
+      let datasets = [];
+
+      if (statusFilter === "all") {
+        let lulusData = [], prosesData = [], tolakData = [], agihData = [], mohonData = [];
+        labels.forEach(m => {
+          let obj = yearData[m] || { Lulus:0, "Dalam Proses":0, Ditolak:0, Agih:0 };
+          let L = obj["Lulus"], P = obj["Dalam Proses"], T = obj["Ditolak"], A = obj["Agih"];
+          lulusData.push(L);
+          prosesData.push(P);
+          tolakData.push(T);
+          agihData.push(A);
+          mohonData.push(L + P + T + A);
+        });
+        datasets.push({ label: "Lulus", data: lulusData, borderColor: "#00a878", backgroundColor: "rgba(0,168,120,0.2)", fill: false });
+        datasets.push({ label: "Dalam Proses", data: prosesData, borderColor: "#3b82f6", backgroundColor: "rgba(59,130,246,0.2)", fill: false });
+        datasets.push({ label: "Ditolak", data: tolakData, borderColor: "#ef4444", backgroundColor: "rgba(239,68,68,0.2)", fill: false });
+        datasets.push({ label: "Agih", data: agihData, borderColor: "#8c04cf", backgroundColor: "rgba(140,4,207,0.2)", fill: false });
+        datasets.push({ label: "Mohon", data: mohonData, borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.2)", fill: false });
+      }
+      else if (statusFilter === "Mohon") {
+        let mohonData = [];
+        labels.forEach(m => {
+          let obj = yearData[m] || { Lulus:0, "Dalam Proses":0, Ditolak:0, Agih:0 };
+          mohonData.push(obj["Lulus"] + obj["Dalam Proses"] + obj["Ditolak"] + obj["Agih"]);
+        });
+        datasets.push({ label: "Mohon (Total)", data: mohonData, borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.2)", fill: false });
+      }
+      else {
+        let singleData = [];
+        labels.forEach(m => {
+          let obj = yearData[m] || { Lulus:0, "Dalam Proses":0, Ditolak:0, Agih:0 };
+          singleData.push(obj[statusFilter] || 0);
+        });
+        let colorMap = {
+          "Lulus": { border:"#00a878", bg:"rgba(0,168,120,0.2)" },
+          "Dalam Proses": { border:"#3b82f6", bg:"rgba(59,130,246,0.2)" },
+          "Ditolak": { border:"#ef4444", bg:"rgba(239,68,68,0.2)" },
+          "Agih": { border:"#8c04cf", bg:"rgba(140,4,207,0.2)" }
+        };
+        let col = colorMap[statusFilter] || { border:"#000", bg:"rgba(0,0,0,0.2)" };
+        datasets.push({ label: statusFilter, data: singleData, borderColor: col.border, backgroundColor: col.bg, fill: false });
+      }
+
+      lineChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 50 } }
+          }
+        }
+      });
+    }
+
+    // ========== BAR CHART ==========
+    function initBarChart(yearFilter) {
+      if (barChart) barChart.destroy();
+      const ctx = document.getElementById("barChart").getContext("2d");
+
+      let dataObj = barDataRaw[yearFilter] || {};
+      let labels = Object.keys(dataObj);
+      let values = Object.values(dataObj);
+      let backgroundColors = generateColorArray(labels.length);
+
+      barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Bilangan Pemohon',
+            data: values,
+            backgroundColor: backgroundColors
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 50 } }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.parsed.y}`;
+                }
+              }
+            },
+            legend: { display: false }
+          },
+          onClick: function(evt) {
+            let activePoints = barChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+            if(activePoints.length > 0) {
+              let firstPoint = activePoints[0];
+              let label = barChart.data.labels[firstPoint.index];
+              if(label === "Lain-lain") {
+                showLainLainModal(yearFilter);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function generateColorArray(count) {
+      let palette = [
+        "#FF6384","#36A2EB","#FFCE56","#cc65fe","#ff9f40","#66ff99","#ff6666","#6699ff",
+        "#ffcc99","#99ffcc","#d4a0a7","#f5c7f7","#edb183","#7dd3fc","#bef264","#a5b4fc"
+      ];
+      let colors = [];
+      for (let i = 0; i < count; i++) {
+        colors.push(palette[i % palette.length]);
+      }
+      return colors;
+    }
+
+    // Lain-lain modal
+    function showLainLainModal(year) {
+      let details = lainLainDetailsByYear[year] || [];
+      let modalBody = document.getElementById("modalBody");
+      modalBody.innerHTML = "";
+      if(details.length === 0) {
+        modalBody.innerHTML = "<p>Tiada maklumat tambahan untuk Lain-lain.</p>";
+      } else {
+        let ul = document.createElement("ul");
+        details.forEach(detail => {
+          let li = document.createElement("li");
+          li.textContent = detail;
+          ul.appendChild(li);
+        });
+        modalBody.appendChild(ul);
+      }
+      document.getElementById("modalLainLain").style.display = "block";
+    }
+    document.querySelector("#modalLainLain .close").onclick = function() {
+      document.getElementById("modalLainLain").style.display = "none";
+    };
+    window.onclick = function(event) {
+      if (event.target == document.getElementById("modalLainLain")) {
+        document.getElementById("modalLainLain").style.display = "none";
+      }
+    };
+  </script>
+
+  <!-- Include external logout script -->
+  <script src="logout.js"></script>
+</body>
+</html>

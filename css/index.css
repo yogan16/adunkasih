@@ -1,0 +1,339 @@
+/* Body with background and top margin */
+body {
+  font-family: 'Arial', sans-serif;
+  margin-top: 8vh;
+  background: url('../images/kedah.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Semi-transparent overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+
+/******** HEADER & NAVBAR ********/
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(5px);
+  padding: 10px 20px; /* Adjusted padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+.logo-container img {
+  margin-right: 15px; /* Adds space between the logos */
+}
+.menu-toggle {
+  display: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  margin-left: 20px;
+}
+/* Navigation links container */
+.nav-links {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 25px;
+  font-size: 16px;
+}
+/* Login button in nav */
+.login-btn {
+  background: #bc0a0f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-right: 40px;
+  margin-left: 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* Remove text underline */
+}
+.login-btn::before {
+  content: "";
+  display: inline-block;
+  background: url('../images/icon.png') no-repeat center center;
+  background-size: contain;
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;
+}
+.login-btn:hover {
+  background: grey; /* Change background to grey on hover */
+  color: white;     /* Ensure text remains white */
+  transition: background 0.3s ease; /* Smooth transition effect */
+}
+
+/******** MOBILE NAV ********/
+@media (max-width: 768px) {
+  header {
+      flex-wrap: wrap;
+  }
+  /* Hide the regular nav links by default */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;          /* hide it off-screen to the right */
+    width: 100%;            /* or whatever width you prefer */
+    max-width: 1000px;
+    margin-top: 63px;      
+    height: auto;         /* full height */
+    background: rgba(0,0,0,0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 60px 20px 20px; /* leave room for header and give side padding */
+    gap: 16px;
+    transition: right 0.3s ease;
+    z-index: 2000;  
+  }
+  .nav-links.active {
+      right: 0;
+  }
+  .nav-links a {
+    width: 50%;
+    padding: 10px 20px;
+    margin-left: 45px;
+    text-align: left;
+    color: #fff;
+    font-size: 18px;
+  }
+  /* Add hover background effect */
+  .nav-links a:hover {
+      background: white;
+      color: #2c1e3c;
+      border-radius: 15px;
+  }
+  .menu-toggle {
+      display: block;
+      margin-right: 32px;
+  }
+}
+
+/******** MAIN CONTENT ********/
+h1, h2 {
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+}
+
+h1 {
+  color: white;
+  font-size: 60px;
+  font-family: 'Fredoka', sans-serif;
+}
+
+h2 {
+  font-family: 'Pacifico', cursive;
+  color: yellow;
+  font-size: 55px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.innovative-system {
+  background: #bc0a0f;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 10px auto;
+  display: inline-block;
+}
+
+.announcement-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.announcement {
+  background: #bc0a0f;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px 0 0 20px;
+  font-weight: bold;
+}
+
+.announcement-line {
+  flex: 1;
+  height: 10px;
+  background: white;
+}
+
+/******** ANNOUNCEMENTS WRAPPER ********/
+#announcementsWrapper {
+  max-width: 1500px;
+  margin: 0 auto 70px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* Announcement card */
+.content-box {
+  background: rgba(255,255,255,0.7);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  padding: 16px;
+  transition: transform 0.2s ease;
+  border: 5px solid #000;      /* thicker border */
+}
+
+.content-box:hover {
+  transform: translateY(-2px);
+}
+
+/* Layout inside card */
+.announcement-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Truncate text to 3 lines */
+.announcement-text {
+  font-size: 16px;
+  color: #222;
+  line-height: 1.5;
+  font-weight: bold;           /* bold announcement text */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer with date & link */
+.announcement-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announcement-date {
+  font-size: 14px;
+  color: #555;
+}
+
+.see-all-link {
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.see-all-link:hover {
+  text-decoration: underline;
+}
+
+/******** MODAL STYLES ********/
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+}
+
+.modal-announcement-icon {
+  display: block;
+  margin: 0 auto 15px;
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.full-announcement-text {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/******** FOOTER ********/
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: black;
+  color: white;
+  text-align: center;
+  padding: 8px 0;
+  z-index: 1000;
+  margin-top: 40px; 
+}
+
+/******** RESPONSIVE TWEAKS ********/
+@media (max-width: 768px) {
+  #announcementsWrapper {
+    padding: 0 8px;
+    gap: 16px;
+  }
+  .content-box {
+    padding: 14px;
+  }
+  .announcement-text {
+    font-size: 15px;
+    -webkit-line-clamp: 4;
+  }
+  .announcement-date,
+  .see-all-link {
+    font-size: 13px;
+  }
+}

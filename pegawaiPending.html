@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pegawai Kebajikan - Senarai Permohonan Bantuan (Proses)</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="css/pending.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="header-title">ADUNKASIH</div>
+    </div>
+    <div class="nav-links">
+      <a href="pegawaiDashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </div>
+  </header>
+
+  <!-- WRAPPER: SIDEBAR + MAIN -->
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          <img src="images/profile.png" alt="Pegawai Kebajikan">
+        </div>
+        <div class="admin-name">
+          Pegawai Kebajikan
+          <br>
+          <span id="pegawaiUsername" style="font-size:14px; font-weight:normal;"></span>
+        </div>
+        <hr class="sidebar-divider">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="pegawaiDashboard.html"><img src="images/application.png" alt="">Senarai Permohonan</a>
+          <li style="margin-left:35px;"><ul>
+            <li><a href="pegawaiPending.html"><img src="images/proses.png" alt="Proses">Proses</a></li>
+            <li><a href="pegawaiLulus.html"><img src="images/lulus.png" alt="Lulus">Lulus</a></li>
+            <li><a href="pegawaiTolak.html"><img src="images/tolak.png" alt="Ditolak">Ditolak</a></li>
+            <li><a href="pegawaiDiagih.html"><img src="images/agih.png" alt="Diagihkan">Diagihkan</a></li>
+          </ul></li>
+        </li>
+        <li><a href="pegawaiMaklumat.html"><img src="images/menu-kebajikan.png" alt="maklumat">Urus Maklumat Kebajikan</a></li>
+        <li><a href="pegawaiUrus.html"><img src="images/menu-elderly.png" alt="UrusData">Urus Data Warganegara</a></li>
+        <li><a href="pegawaiPengumuman.html"><img src="images/menu-announcement.png" alt="Pengumuman">Pengumuman</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT (scrollable) -->
+    <div class="main-content">
+      <div class="welcome-text">
+        <span id="welcomeMsg">Selamat Datang ke ADUNKasih @ Kedah</span>
+        <img src="images/handshake.png" alt="Handshake Icon">
+      </div>
+
+      <!-- ====== TITLE + MONTH FILTER ====== -->
+      <div class="title-filter-container">
+        <div class="page-title">Senarai Permohonan Bantuan (Proses)</div>
+        <!-- Month Filter Dropdown -->
+        <div class="month-filter">
+          <select id="monthFilter">
+            <option value="">Semua Bulan</option>
+            <option value="01">Januari</option>
+            <option value="02">Februari</option>
+            <option value="03">Mac</option>
+            <option value="04">April</option>
+            <option value="05">Mei</option>
+            <option value="06">Jun</option>
+            <option value="07">Julai</option>
+            <option value="08">Ogos</option>
+            <option value="09">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Disember</option>
+          </select>
+        </div>
+      </div>
+      <!-- END: TITLE + MONTH FILTER -->
+
+      <!-- CARDS GRID -->
+      <div class="cards-grid" id="cardsGrid">
+        <!-- Cards will be generated dynamically here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah
+  </footer>
+
+  <!-- ====== MODAL (DETAILS) ====== -->
+  <div class="modal" id="infoModal">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title">MAKLUMAT PERMOHONAN</div>
+        <div class="modal-close" id="modalClose">X</div>
+      </div>
+
+      <!-- Modal Body: Two columns + Tanggungan Table -->
+      <div class="modal-body">
+        <!-- LEFT COLUMN -->
+        <div class="modal-left">
+          <h4>MAKLUMAT PEMOHON :</h4>
+          <div class="info-row"><label>Nama</label><span id="mNama"></span></div>
+          <div class="info-row"><label>No. MyKad</label><span id="mNoMyKad"></span></div>
+          <div class="info-row"><label>Umur</label><span id="mUmur"></span></div>
+          <div class="info-row"><label>Jantina</label><span id="mJantina"></span></div>
+          <div class="info-row"><label>No. Tel</label><span id="mNoTel"></span></div>
+          <div class="info-row"><label>Pekerjaan</label><span id="mPekerjaan"></span></div>
+          <div class="info-row"><label>Status Perkahwinan</label><span id="mStatusPerkahwinan"></span></div>
+          <div class="info-row"><label>Pendapatan Kasar</label><span id="mPendapatan"></span></div>
+          <div class="info-row"><label>Sumber Data</label><span id="mSumberData"></span></div>
+          <div class="info-row"><label>Status Permohonan</label><span id="mApplicationStatus"></span></div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="modal-right">
+          <h4>ALAMAT SURAT MENYURAT :</h4>
+          <div class="info-row"><label>Alamat</label><span id="mAlamat"></span></div>
+          <div class="info-row"><label>Poskod</label><span id="mPoskod"></span></div>
+          <div class="info-row"><label>ADUN</label><span id="mAdun"></span></div>
+          <div class="info-row"><label>Bandar</label><span id="mBandar"></span></div>
+          <div class="info-row"><label>Bantuan</label><span id="mBantuanJenis"></span></div>
+          <div class="info-row"><label>Penerangan</label><span id="mPenerangan"></span></div>
+          <div class="info-row"><label>Lain-Lain</label><span id="mLainLain"></span></div>
+          <div class="doc-row">
+            <label>Salinan MyKad</label>
+            <a id="mMykadFile" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon" height="20" width="20">
+              Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Salinan Kad OKU</label>
+            <a id="mOkuFile" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon" height="20" width="20">
+              Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Bukti Pendapatan</label>
+            <a id="mBuktiPendapatan" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon" height="20" width="20">
+              Muat Turun
+            </a>
+          </div>
+          <div class="doc-row">
+            <label>Dokumen Tambahan</label>
+            <a id="mDokumenTambahan" href="#" target="_blank">
+              <img src="images/download.png" alt="Download Icon" class="download-icon" height="20" width="20">
+              Muat Turun
+            </a>
+          </div>
+        </div>
+
+        <!-- TANGGUNGAN -->
+        <div class="tanggungan-container">
+          <div class="tanggungan-title">MAKLUMAT TANGGUNGAN :</div>
+          <table class="tanggungan-table" id="tanggunganTable">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>No. MyKad</th>
+                <th>Umur</th>
+                <th>Hubungan</th>
+                <th>Pendapatan (RM)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows inserted dynamically -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5" style="text-align: right; font-weight: bold;">Jumlah Pendapatan (RM):</td>
+                <td id="mTotalPendapatan">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Buttons: LULUS / TOLAK -->
+      <div class="modal-footer">
+        <button class="footer-btn" id="btnLulus">LULUS</button>
+        <button class="footer-btn btn-tolak" id="btnTolak">TOLAK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== CONFIRMATION MODAL ====== -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Pengesahan</div>
+        <div class="modal-close" id="confirmModalClose">X</div>
+      </div>
+      <div class="modal-body" style="grid-template-columns: 1fr;">
+        <p>Adakah anda ingin semak maklumat permohonan ini?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="footer-btn" id="btnConfirmTeruskan">Teruskan</button>
+        <button class="footer-btn btn-tolak" id="btnConfirmBatal">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LULUS MODAL -->
+  <div class="modal" id="lulusModal">
+    <div class="modal-box">
+      <span class="modal-close" id="lulusModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/passed.png" alt="Green Check" class="modal-icon">
+        <h2 class="modal-title">LULUS</h2>
+      </div>
+      <p class="modal-status" style="text-align:center;">
+        Status permohonan ini akan dikemas kini setelah anda<br>
+        melengkapkan butiran di bawah dan mengesahkan halaman ini
+      </p>
+      <div class="modal-field">
+        <label>Anggaran Tarikh Agihan :</label>
+        <input type="date" id="lulusTarikhAgihan">
+      </div>
+      <div class="modal-field">
+        <label>Penerangan (Jika Ada) :</label>
+        <textarea id="lulusPenerangan" rows="3"></textarea>
+      </div>
+        <!-- inside <div class="modal-box">, e.g. right after Penerangan -->
+      <div class="modal-field" id="quotationUploadContainer" style="display:none;">
+        <label>Sebutharga(PDF):</label>
+        <input type="file" id="quotationFileInput" accept="application/pdf" />
+      </div>
+      <!-- Quotation Amount -->
+      <div class="modal-field">
+        <label>Jumlah Sebutharga(RM):</label>
+        <input type="number" id="quotationAmount" min="0" step="0.01" placeholder="0.00" />
+      </div><center>
+      <button class="modal-btn-lulus" id="btnLulusSahkan">SAHKAN</button>
+    </center></div>
+  </div>
+
+  <!-- TOLAK MODAL -->
+  <div class="modal" id="tolakModal">
+    <div class="modal-box">
+      <span class="modal-close" id="tolakModalClose">&times;</span>
+      <div class="modal-top">
+        <img src="images/warning.png" alt="Red Warning" class="modal-icon">
+        <h2 class="modal-title">TOLAK</h2>
+      </div>
+      <p class="modal-status" style="text-align:center;">
+        Status permohonan ini akan dikemas kini setelah anda<br>
+        melengkapkan butiran di bawah dan mengesahkan halaman ini
+      </p>
+      <div class="modal-field">
+        <label>Penerangan (Jika Ada) :</label>
+        <textarea id="tolakPenerangan" rows="3"></textarea>
+      </div><center>
+      <button class="modal-btn-tolak" id="btnTolakSahkan">SAHKAN</button>
+    </center></div>
+  </div>
+
+  <!-- FLAG HISTORY MODAL -->
+  <div class="modal" id="flagModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Permohonan yang telah Diluluskan</div>
+        <div class="modal-close" id="flagModalClose">X</div>
+      </div>
+      <div class="modal-body">
+        <ul id="flagList" style="padding-left:20px;"></ul>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="logout.js"></script>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script>
+    // 1. Check login
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      alert("Sila log masuk sebagai Pegawai Kebajikan.");
+      window.location.href = "login.html";
+    }
+    var database = firebase.database();
+
+    // Global variables
+    let currentPermData = null;
+    let allPermohonan = [];
+    let currentADUN = ""; // Will store the logged-in ADUN
+
+    // 2. Retrieve pegawai username and set currentADUN
+    database.ref("Users/pegawai_kebajikan").once("value")
+      .then(snapshot => {
+        let foundUser = false;
+        snapshot.forEach(child => {
+          const data = child.val();
+          if (data.email === userEmail) {
+            foundUser = true;
+            currentADUN = data.username || "";
+            document.getElementById("pegawaiUsername").textContent = currentADUN;
+            document.getElementById("welcomeMsg").textContent =
+              "Selamat Datang ke ADUNKasih @ Kedah, " + (currentADUN || "Pegawai");
+          }
+        });
+        if (!foundUser) {
+          alert("Rekod pegawai tidak dijumpai dalam pangkalan data!");
+        }
+      })
+      .catch(error => {
+        console.error("Ralat ketika memuatkan data Pegawai:", error);
+      });
+
+    // 3. Load pending permohonan data
+    function loadPermohonan() {
+      const cardsGrid = document.getElementById("cardsGrid");
+      cardsGrid.innerHTML = "";
+      allPermohonan = []; // Reset the array
+
+      // Define pending statuses to be shown
+      const pendingStatuses = [
+        "Permohonan telah Dihantar",
+        "Permohonan dan Dokumen Diterima",
+        "Maklumat Permohonan Dalam Semakan",
+        "Dokumen Sokongan Dalam Semakan",
+        "Dalam Proses Kelulusan"
+      ];
+
+      database.ref("permohonan").once("value", snapshot => {
+        snapshot.forEach(childSnapshot => {
+          const permData = childSnapshot.val();
+          permData.key = childSnapshot.key;
+          if (!pendingStatuses.includes(permData.applicationStatus)) return;
+          if (permData.pemohon?.adun !== currentADUN) return;
+          allPermohonan.push(permData);
+        });
+        filterAndRender();
+      });
+    }
+
+    // 4. Create card function
+    function createCard(permData) {
+      const cardsGrid = document.getElementById("cardsGrid");
+      const nama = permData.pemohon?.nama || "Tanpa Nama";
+      const noMykad = permData.pemohon?.noMykad || "N/A";
+      const noTel = permData.pemohon?.noTel || "N/A";
+      const jenisBantuan = permData.bantuan?.jenis || "Tiada";
+      let displayedDate = permData.applicationStatusTimestamps?.["Permohonan telah Dihantar"] || permData.timestamp || "N/A";
+      const statusNow = "PROSES";
+
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card-item";
+      cardDiv.addEventListener("click", () => {
+        confirmApplication(permData);
+      });
+
+      const iconDiv = document.createElement("div");
+      iconDiv.className = "card-icon";
+      const iconImg = document.createElement("img");
+      iconImg.src = "images/profile3.png";
+      iconDiv.appendChild(iconImg);
+
+      const nameDiv = document.createElement("div");
+      nameDiv.className = "card-name";
+      nameDiv.textContent = nama;
+
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "card-info";
+      infoDiv.textContent = noMykad;
+
+      const phoneDiv = document.createElement("div");
+      phoneDiv.className = "card-info";
+      phoneDiv.textContent = noTel;
+
+      const bantuanDiv = document.createElement("div");
+      bantuanDiv.className = "card-bantuan";
+      bantuanDiv.textContent = jenisBantuan;
+
+      const dateDiv = document.createElement("div");
+      dateDiv.className = "card-date";
+      dateDiv.textContent = displayedDate;
+
+      const statusDiv = document.createElement("div");
+      statusDiv.className = "card-status";
+      statusDiv.textContent = statusNow;
+
+      cardDiv.appendChild(iconDiv);
+      cardDiv.appendChild(nameDiv);
+      cardDiv.appendChild(infoDiv);
+      cardDiv.appendChild(phoneDiv);
+      cardDiv.appendChild(bantuanDiv);
+      cardDiv.appendChild(dateDiv);
+      cardDiv.appendChild(statusDiv);
+
+      // ───── INSERT THIS FRAGMENT ─────
+      firebase.database()
+        .ref("permohonan")
+        .orderByChild("pemohon/noMykad")
+        .equalTo(noMykad.trim())
+        .once("value")
+        .then(snap => {
+          const history = [];
+          snap.forEach(child => {
+            const x = child.val();
+            if (x.applicationStatus === "Bantuan telah Diagihkan") {
+              const ts    = x.applicationStatusTimestamps?.["Bantuan telah Diagihkan"] || "—";
+              const jenis = x.bantuan?.jenis    || "—";
+              history.push({ date: ts, jenis });
+            }
+          });
+          // create the clickable flag icon
+          const flag = document.createElement("img");
+          flag.src       = "images/flag.png";             
+          flag.className = "card-flag-img";                 
+          flag.style     = "position:absolute;top:8px;right:8px;width:40px;cursor:pointer;";
+          flag.addEventListener("click", e => {
+            e.stopPropagation();
+            showFlagModal(history);
+          });
+          cardDiv.appendChild(flag);
+        });
+
+      cardsGrid.appendChild(cardDiv);
+
+    }
+    function showFlagModal(history) {
+      const modal = document.getElementById("flagModal");
+      const ul    = document.getElementById("flagList");
+      ul.innerHTML = "";
+      if (history.length) {
+        history.forEach(h => {
+          const li = document.createElement("li");
+          li.textContent = `${h.date} — ${h.jenis}`;
+          ul.appendChild(li);
+        });
+      } else {
+        ul.innerHTML = "<li>TIADA DATA</li>";
+      }
+      modal.style.display = "flex";
+    }
+
+    document.getElementById("flagModalClose")
+      .addEventListener("click", () => {
+        document.getElementById("flagModal").style.display = "none";
+      });
+
+
+    // 5. Filter by month and render cards
+    function filterAndRender() {
+      const selectedMonth = document.getElementById("monthFilter").value;
+      const cardsGrid = document.getElementById("cardsGrid");
+      cardsGrid.innerHTML = "";
+
+      allPermohonan.forEach(permData => {
+        if (!selectedMonth) {
+          createCard(permData);
+        } else {
+          const dateStr = permData.applicationStatusTimestamps?.["Permohonan telah Dihantar"] || "";
+          if (dateStr && dateStr.length >= 5) {
+            // Extract month part assuming format "DD-MM-YYYY hh:mm AM/PM"
+            const monthPart = dateStr.substring(3, 5);
+            if (monthPart === selectedMonth) {
+              createCard(permData);
+            }
+          }
+        }
+      });
+    }
+
+    // 6. Confirm application before showing details
+    function confirmApplication(permData) {
+      currentPermData = permData;
+      if (permData.applicationStatus === "Permohonan telah Dihantar") {
+        document.getElementById("confirmModal").style.display = "flex";
+      } else {
+        showApplicationDetails(permData);
+      }
+    }
+
+    // Helper: Update download link color if file is unavailable
+    function updateDownloadLink(linkId, fileUrl) {
+      const linkElement = document.getElementById(linkId);
+      if (fileUrl && fileUrl.trim() !== "") {
+        linkElement.href = fileUrl;
+        linkElement.style.color = ""; 
+      } else {
+        linkElement.href = "#";
+        linkElement.style.color = "red";
+      }
+    }
+  
+    // 7. Show details modal
+    function showApplicationDetails(permData) {
+      document.getElementById("mNama").textContent = permData.pemohon?.nama || "";
+      document.getElementById("mNoMyKad").textContent = permData.pemohon?.noMykad || "";
+      document.getElementById("mUmur").textContent = permData.pemohon?.umur || "";
+      document.getElementById("mJantina").textContent = permData.pemohon?.jantina || "";
+      document.getElementById("mNoTel").textContent = permData.pemohon?.noTel || "";
+      document.getElementById("mPekerjaan").textContent = permData.pemohon?.pekerjaan || "";
+      document.getElementById("mStatusPerkahwinan").textContent = permData.pemohon?.statusPerkahwinan || "";
+      document.getElementById("mPendapatan").textContent = permData.pemohon?.pendapatanKasar || "";
+      document.getElementById("mSumberData").textContent = permData?.sumberData || "Tidak";
+      document.getElementById("mApplicationStatus").textContent = permData.applicationStatus || "";
+
+      document.getElementById("mAlamat").textContent = permData.pemohon?.alamat || "";
+      document.getElementById("mPoskod").textContent = permData.pemohon?.poskod || "";
+      document.getElementById("mAdun").textContent = permData.pemohon?.adun || "";
+      document.getElementById("mBandar").textContent = permData.pemohon?.bandar || "";
+      document.getElementById("mBantuanJenis").textContent = permData.bantuan?.jenis || "";
+      document.getElementById("mPenerangan").textContent = permData.bantuan?.huraian || "";
+      document.getElementById("mLainLain").textContent = permData.bantuan?.lainLain || "";
+
+      updateDownloadLink("mMykadFile", permData.dokumen?.mykadFile);
+      updateDownloadLink("mOkuFile", permData.dokumen?.okuFile);
+      updateDownloadLink("mBuktiPendapatan", permData.dokumen?.buktiPendapatan);
+      updateDownloadLink("mDokumenTambahan", permData.dokumen?.dokumenTambahan);
+
+      const tanggunganBody = document.getElementById("tanggunganTable").querySelector("tbody");
+      tanggunganBody.innerHTML = "";
+      let totalPendapatan = 0;
+      if (permData.tanggungan) {
+        Object.keys(permData.tanggungan).forEach((key, index) => {
+          const t = permData.tanggungan[key];
+          const pendapatan = parseFloat(t.pendapatan) || 0;
+          totalPendapatan += pendapatan;
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${t.name || ""}</td>
+            <td>${t.mykad || ""}</td>
+            <td>${t.umur || ""}</td>
+            <td>${t.hubungan || ""}</td>
+            <td>${pendapatan.toFixed(2)}</td>
+          `;
+          tanggunganBody.appendChild(row);
+        });
+      }
+      // Display the computed total in the tfoot cell
+      document.getElementById("mTotalPendapatan").textContent = totalPendapatan.toFixed(2);
+
+      document.getElementById("infoModal").style.display = "flex";
+      attachDocumentDownloadHandlers();
+    }
+
+    // 8. Attach document download handlers
+    function attachDocumentDownloadHandlers() {
+      const docIds = ["mMykadFile", "mOkuFile", "mBuktiPendapatan", "mDokumenTambahan"];
+      docIds.forEach(id => {
+        const linkEl = document.getElementById(id);
+        if (!linkEl) return;
+        linkEl.onclick = function() {
+          if (linkEl.href && linkEl.href !== "#") {
+            updateApplicationStatus(currentPermData.key, "Dokumen Sokongan Dalam Semakan");
+            setTimeout(() => {
+              updateApplicationStatus(currentPermData.key, "Dalam Proses Kelulusan");
+            }, 1000);
+          }
+        };
+      });
+    }
+
+    // 9. Helper: Update application status
+    function updateApplicationStatus(appKey, newStatus) {
+      const newTime = formatTimestamp();
+      const updates = {};
+      updates["applicationStatus"] = newStatus;
+      updates[`applicationStatusTimestamps/${newStatus}`] = newTime;
+      firebase.database().ref("permohonan/" + appKey).update(updates);
+    }
+    
+
+    // 10. Format timestamp as "DD-MM-YYYY hh:mm AM/PM"
+    function formatTimestamp() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const day = ("0" + now.getDate()).slice(-2);
+      const month = ("0" + (now.getMonth() + 1)).slice(-2);
+      const year = now.getFullYear();
+      const min = ("0" + minutes).slice(-2);
+      return `${day}-${month}-${year} ${hours}:${min} ${ampm}`;
+    }
+
+    // 11. Confirm Modal buttons
+    document.getElementById("btnConfirmTeruskan").addEventListener("click", function() {
+      if (currentPermData && currentPermData.key) {
+        const timeNow = formatTimestamp();
+        const updates = {
+          applicationStatus: "Maklumat Permohonan Dalam Semakan",
+          [`applicationStatusTimestamps/Permohonan dan Dokumen Diterima`]: timeNow,
+          [`applicationStatusTimestamps/Maklumat Permohonan Dalam Semakan`]: timeNow,
+        };
+        firebase.database().ref("permohonan/" + currentPermData.key).update(updates);
+      }
+      document.getElementById("confirmModal").style.display = "none";
+      showApplicationDetails(currentPermData);
+    });
+    document.getElementById("btnConfirmBatal").addEventListener("click", function() {
+      document.getElementById("confirmModal").style.display = "none";
+    });
+    document.getElementById("confirmModalClose").addEventListener("click", function() {
+      document.getElementById("confirmModal").style.display = "none";
+    });
+
+    // 12. Lulus / Tolak buttons in details modal
+    document.getElementById("btnLulus").onclick = function() {
+      const jenis = currentPermData.bantuan?.jenis;
+      const uploadContainer = document.getElementById("quotationUploadContainer");
+
+      if (jenis === "Bantuan Baiki Rumah") {
+        uploadContainer.style.display = "block";
+      } else {
+        uploadContainer.style.display = "none";
+      }
+
+      document.getElementById("lulusModal").style.display = "flex";
+    };
+
+    document.getElementById("btnTolak").onclick = function() {
+      document.getElementById("tolakModal").style.display = "flex";
+    };
+
+    // 13. Lulus Modal close
+    document.getElementById("lulusModalClose").onclick = function() {
+      document.getElementById("lulusModal").style.display = "none";
+    };
+    // 14. Tolak Modal close
+    document.getElementById("tolakModalClose").onclick = function() {
+      document.getElementById("tolakModal").style.display = "none";
+    };
+
+    // 15. Lulus SAHKAN – send to ADUN for 2nd-level approval
+    document.getElementById("btnLulusSahkan").onclick = function() {
+      if (!currentPermData || !currentPermData.key) return;
+
+      const key           = currentPermData.key;
+      const jenis         = currentPermData.bantuan?.jenis;
+      const tarikhAgihan  = document.getElementById("lulusTarikhAgihan").value  || "";
+      const penerangan    = document.getElementById("lulusPenerangan").value    || "";
+      const quotationAmt  = parseFloat(
+        document.getElementById("quotationAmount").value
+      ) || 0;
+      const timestampNow  = formatTimestamp();
+
+      // Base updates for all aid types
+      const updates = {
+        applicationStatus: "Menunggu Kelulusan ADUN",
+        [`applicationStatusTimestamps/Menunggu Kelulusan ADUN`]: timestampNow,
+        tarikhAnggaranAgihan: tarikhAgihan,
+        lulusPenerangan: penerangan,
+        quotationAmount: quotationAmt        // ← new field
+      };
+
+      // If it's Baiki Rumah, require & upload a PDF
+      if (jenis === "Bantuan Baiki Rumah") {
+        const fileInput = document.getElementById("quotationFileInput");
+        const file = fileInput.files[0];
+        if (!file) {
+          alert("Sila muat naik Sebutharga PDF untuk Bantuan Baiki Rumah.");
+          return;
+        }
+
+        // Upload to Storage under /quotations/<key>.pdf
+        const storageRef = firebase.storage().ref();
+        const fileRef    = storageRef.child(`quotations/${key}.pdf`);
+
+        fileRef.put(file)
+          .then(snapshot => snapshot.ref.getDownloadURL())
+          .then(downloadURL => {
+            updates.quotationURL = downloadURL;
+            return firebase.database().ref("permohonan/" + key).update(updates);
+          })
+          .then(() => {
+            alert("Quotation dimuat naik dan permohonan dihantar untuk kelulusan ADUN.");
+            document.getElementById("lulusModal").style.display = "none";
+            document.getElementById("infoModal").style.display = "none";
+            loadPermohonan();
+          })
+          .catch(err => {
+            console.error("Upload error:", err);
+            alert("Gagal memuat naik quotation: " + err.message);
+          });
+
+      } else {
+        // For other aid types, just update DB
+        firebase.database().ref("permohonan/" + key)
+          .update(updates)
+          .then(() => {
+            alert("Permohonan dihantar untuk kelulusan ADUN.");
+            document.getElementById("lulusModal").style.display = "none";
+            document.getElementById("infoModal").style.display = "none";
+            loadPermohonan();
+          })
+          .catch(err => {
+            console.error("DB update error:", err);
+            alert("Gagal mengemas kini permohonan: " + err.message);
+          });
+      }
+    };
+
+    // 16. Tolak SAHKAN – update status and add penerangan
+    document.getElementById("btnTolakSahkan").onclick = function() {
+      if (!currentPermData || !currentPermData.key) return;
+      const penerangan = document.getElementById("tolakPenerangan").value || "";
+      const timeNow = formatTimestamp();
+      const updates = {
+        applicationStatus: "Permohonan Dibatalkan",
+        [`applicationStatusTimestamps/Permohonan Dibatalkan`]: timeNow,
+        tolakPenerangan: penerangan
+      };
+      firebase.database().ref("permohonan/" + currentPermData.key).update(updates);
+      document.getElementById("tolakModal").style.display = "none";
+      document.getElementById("infoModal").style.display = "none";
+      alert("Permohonan telah ditolak.");
+      loadPermohonan();
+    };
+
+    // 17. Close details modal
+    document.getElementById("modalClose").onclick = function() {
+      document.getElementById("infoModal").style.display = "none";
+    };
+
+    // On page load, load pending applications
+    window.onload = function() {
+      loadPermohonan();
+    };
+
+    // Listen for month filter changes
+    document.getElementById("monthFilter").addEventListener("change", filterAndRender);
+  </script>
+</body>
+</html>

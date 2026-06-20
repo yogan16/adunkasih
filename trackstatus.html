@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Semakan Status Permohonan - ADUNKASIH</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/trackstatus.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo-container">
+      <img src="images/logo1.png" alt="Logo Malaysia">
+      <img src="images/logo2.png" alt="Logo Kedah">
+      <div class="logo">ADUNKASIH</div>
+    </div>
+    <div class="menu-toggle">&#9776;</div>
+    <nav class="nav-links">
+      <a href="dashboard.html">Papan Utama</a>
+      <a href="aboutus.html">Tentang Kami</a>
+      <a href="contactus.html">Hubungi Kami</a>
+      <a id="logoutBtn" class="logout-btn">Log Keluar</a>
+    </nav>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <div class="page-title-container">
+      <h1>SEMAKAN STATUS PERMOHONAN</h1>
+    </div>
+
+    <!-- Applicant Info Container -->
+    <div class="semakan-container" id="applicantInfo">
+      <div class="semakan-left">
+        <img src="images/profile.png" alt="Avatar" id="profileAvatar" />
+      </div>
+      <div class="semakan-right">
+        <div class="detail-row"><span class="label">Nama:</span> <span id="namaValue">-</span></div>
+        <div class="detail-row"><span class="label">No. MyKad:</span> <span id="mykadValue">-</span></div>
+        <div class="detail-row"><span class="label">Jenis Bantuan:</span> <span id="bantuanValue">-</span></div>
+        <div class="detail-row"><span class="label">Penerangan:</span> <span id="peneranganValue">-</span></div>
+        <div class="detail-row"><span class="label">Status Permohonan:</span> <span id="statusValue">-</span></div>
+      </div>
+    </div>
+
+    <!-- Timeline Container -->
+    <div class="timeline-container" id="timelineContainer"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>Hal Cipta Terpelihara 2024 @ Kerajaan Negeri Kedah</footer>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="logout.js"></script>
+
+  <script>
+    const database = firebase.database();
+
+    const statusSteps = [
+      { step: 1, title: "Permohonan telah Dihantar" },
+      { step: 2, title: "Permohonan dan Dokumen Diterima" },
+      { step: 3, title: "Maklumat Permohonan Dalam Semakan" },
+      { step: 4, title: "Dokumen Sokongan Dalam Semakan" },
+      { step: 5, title: "Dalam Proses Kelulusan" },
+      { step: 6, title: "Permohonan Diluluskan / Permohonan Dibatalkan" },
+      { step: 7, title: "Bantuan telah Diagihkan" }
+    ];
+
+    function getNumericStatusAndFlags(status) {
+      let n = 0, cancelled = false;
+      switch (status) {
+        case "Permohonan telah Dihantar": n = 1; break;
+        case "Permohonan dan Dokumen Diterima": n = 2; break;
+        case "Maklumat Permohonan Dalam Semakan": n = 3; break;
+        case "Dokumen Sokongan Dalam Semakan": n = 4; break;
+        case "Dalam Proses Kelulusan": n = 5; break;
+        case "Menunggu Kelulusan ADUN": n = 5; break;
+        case "Permohonan Diluluskan": n = 6; break;
+        case "Permohonan Dibatalkan": n = 6; cancelled = true; break;
+        case "Bantuan telah Diagihkan": n = 7; break;
+      }
+      return { numericStatus: n, isCancelled: cancelled };
+    }
+
+    function parseTimestamp(str) {
+      if (!str) return 0;
+      const [datePart, timePart] = str.split(',');
+      const [day, month, year] = datePart.trim().split('/').map(Number);
+      let [time, meridiem] = timePart.trim().split(' ');
+      let [hour, minute] = time.split(':').map(Number);
+      if (meridiem === 'PM' && hour < 12) hour += 12;
+      if (meridiem === 'AM' && hour === 12) hour = 0;
+      return new Date(year, month - 1, day, hour, minute).getTime();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userIC = localStorage.getItem("userIC");
+      if (!userIC) {
+        alert("Sila log masuk terlebih dahulu.");
+        return window.location.href = "login.html";
+      }
+
+      database
+        .ref("permohonan")
+        .orderByChild("pemohon/noMykad")
+        .equalTo(userIC)
+        .on("value", snap => {
+          let latest = null, maxTs = 0;
+          snap.forEach(child => {
+            const d = child.val();
+            const ts = parseTimestamp(d.timestamp);
+            if (ts > maxTs) { maxTs = ts; latest = d; }
+          });
+
+          if (!latest) {
+            return document.getElementById("timelineContainer").innerHTML = "<p>Tiada maklumat permohonan.</p>";
+          }
+
+          const { pemohon, bantuan, applicationStatus, applicationStatusTimestamps = {}, tarikhBantuanDiagihkan, tarikhAnggaranAgihan } = latest;
+          const tarikhDis = tarikhBantuanDiagihkan || tarikhAnggaranAgihan || "-";
+
+          document.getElementById("namaValue").textContent = pemohon.nama || "-";
+          document.getElementById("mykadValue").textContent = pemohon.noMykad;
+          document.getElementById("bantuanValue").textContent = bantuan.jenis || "-";
+          document.getElementById("peneranganValue").textContent =
+            applicationStatus === "Permohonan Diluluskan" ? latest.lulusPenerangan :
+            applicationStatus === "Permohonan Dibatalkan" ? latest.tolakPenerangan : "-";
+          document.getElementById("statusValue").textContent = applicationStatus;
+
+          if (["Permohonan Diluluskan","Permohonan Dibatalkan","Bantuan telah Diagihkan"].includes(applicationStatus)
+              && localStorage.getItem("notifiedStatus") !== applicationStatus) {
+            let msg = "";
+            if (applicationStatus === "Permohonan Diluluskan")
+              msg = `Permohonan Diluluskan; diagihkan pada ${tarikhDis}.`;
+            else if (applicationStatus === "Permohonan Dibatalkan")
+              msg = "Permohonan Dibatalkan.";
+            else
+              msg = `Bantuan diagihkan pada ${tarikhDis}.`;
+
+            const notis = JSON.parse(localStorage.getItem("notifications") || "[]");
+            notis.push({ text: msg, timestamp: new Date().toLocaleString() });
+            localStorage.setItem("notifications", JSON.stringify(notis));
+            localStorage.setItem("notifiedStatus", applicationStatus);
+          }
+
+          const { numericStatus, isCancelled } = getNumericStatusAndFlags(applicationStatus);
+          buildTimeline(numericStatus, isCancelled, applicationStatusTimestamps, tarikhDis);
+        });
+    });
+
+    function buildTimeline(n, cancelled, times, tarikhDis) {
+      const cont = document.getElementById("timelineContainer");
+      cont.innerHTML = "";
+
+      statusSteps.forEach(s => {
+        const div    = document.createElement("div"),
+              circle = document.createElement("div"),
+              info   = document.createElement("div");
+
+        div.className    = "timeline-step";
+        circle.className = "step-circle";
+        if (n >= s.step) {
+          circle.classList.add((s.step === 6 && cancelled) ? "cancelled" : "active");
+        }
+
+        info.className = "step-info";
+
+        // Override step-6 title
+        let titleText = s.title;
+        if (s.step === 6) {
+          titleText = cancelled
+            ? "Permohonan Dibatalkan"
+            : "Permohonan Diluluskan";
+        }
+
+        // Pick correct timestamp
+        let dateKey;
+        if (s.step === 5) {
+          dateKey = times["Dalam Proses Kelulusan"] || times["Menunggu Kelulusan ADUN"];
+        } else if (s.step === 6) {
+          dateKey = times["Permohonan Diluluskan"] || times["Permohonan Dibatalkan"];
+        } else {
+          dateKey = times[s.title];
+        }
+
+        info.innerHTML = `
+          <div class="step-title">${titleText}</div>
+          <div class="step-date">${dateKey ? "Updated: " + dateKey : "Pending..."}</div>
+        `;
+
+        div.append(circle, info);
+        cont.appendChild(div);
+      });
+
+      // Distribution note as before
+      if (n === 6 && !cancelled) {
+        const note = document.createElement("div");
+        note.className = "distribution-note";
+        note.textContent = `Anggaran Tarikh Agihan: ${tarikhDis}`;
+        cont.appendChild(note);
+      } else if (n === 7) {
+        const note = document.createElement("div");
+        note.className = "distribution-note";
+        note.innerHTML = `<strong>Bantuan Diagihkan:</strong> ${tarikhDis}`;
+        cont.appendChild(note);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const m = document.querySelector(".menu-toggle"), nav = document.querySelector(".nav-links");
+      if (m && nav) m.addEventListener("click", ()=>nav.classList.toggle("active"));
+    });
+  </script>
+</body>
+</html>
