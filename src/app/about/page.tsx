@@ -1,11 +1,15 @@
-import { LegacyHeader } from "@/components/legacy-header";
+import { auth } from "@/auth";
+import { RoleAwareHeader } from "@/components/role-aware-header";
 import { LegacyFooter } from "@/components/legacy-footer";
 import styles from "./about.module.css";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const session = await auth();
+  const role = session?.user?.role;
+
   return (
     <div className={styles.page}>
-      <LegacyHeader />
+      <RoleAwareHeader role={role} />
 
       <div className={styles.mainWrapper}>
         <div className={styles.aboutContainer}>

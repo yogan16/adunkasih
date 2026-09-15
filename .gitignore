@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (.env.example is a safe placeholder template, kept for setup docs)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -43,3 +44,7 @@ next-env.d.ts
 # Misc config files
 AGENTS.md
 CLAUDE.md
+
+# Original static-site prototype, kept locally for reference during the
+# Next.js rebuild but not part of the shipped app
+/legacy/

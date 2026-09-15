@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LegacyHeader } from "@/components/legacy-header";
 import { LegacyFooter } from "@/components/legacy-footer";
+import { PasswordInput } from "@/components/password-input";
 import styles from "./register.module.css";
 
 type FieldErrors = Partial<Record<"fullname" | "idNumber" | "phone" | "password", string[]>>;
@@ -117,12 +118,12 @@ export default function RegisterPage() {
               ))}
 
               <label htmlFor="password">Kata Laluan</label>
-              <input
-                type="password"
+              <PasswordInput
                 id="password"
                 placeholder="contoh: User@123"
                 value={form.password}
-                onChange={(e) => update("password", e.target.value)}
+                onChange={(v) => update("password", v)}
+                autoComplete="new-password"
                 required
               />
               {errors.password?.map((err) => (
@@ -133,7 +134,7 @@ export default function RegisterPage() {
 
               {formError && <p className={styles.errorText}>{formError}</p>}
 
-              <button type="submit" disabled={loading}>
+              <button type="submit" className={styles.submitBtn} disabled={loading}>
                 {loading ? "SEDANG DAFTAR..." : "DAFTAR"}
               </button>
               <p>

@@ -1,6 +1,5 @@
 .page {
   font-family: var(--font-fredoka), sans-serif;
-  padding-top: 5vh;
   background: url("/images/kedah.jpg") no-repeat center center fixed;
   background-size: cover;
   min-height: 100%;
@@ -21,8 +20,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 110px 16px 48px;
-  min-height: 100vh;
+  align-items: safe center;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+  padding: 24px 16px;
   box-sizing: border-box;
 }
 .registerContent {
@@ -75,7 +76,7 @@
   outline: none;
   box-shadow: 0 0 0 3px rgba(188, 10, 15, 0.12);
 }
-.registerForm button {
+.submitBtn {
   background-color: #bc0a0f;
   font-family: var(--font-fredoka), sans-serif;
   font-weight: 600;
@@ -88,14 +89,15 @@
   transition: background 0.2s ease;
   cursor: pointer;
 }
-.registerForm button:hover {
+.submitBtn:hover {
   background-color: #96080c;
 }
-.registerForm button:disabled {
+.submitBtn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
-.registerForm a {
+.registerForm a,
+.registerForm a:visited {
   text-decoration: none;
   color: #bc0a0f;
   font-weight: 600;
@@ -115,4 +117,11 @@
   margin-top: -10px;
   margin-bottom: 12px;
   text-align: left;
+}
+
+@media (min-width: 1024px) {
+  .registerContent {
+    max-width: 540px;
+    padding: 40px 48px;
+  }
 }

@@ -12,13 +12,21 @@ enum Role {
   CITIZEN
   PEGAWAI
   ADMIN
+  WAKIL_ADUN
 }
 
+// The 7-stage review pipeline. Steps progress in order 1-5, then branch to
+// either APPROVED or REJECTED at step 6; DISBURSED (step 7) is only ever
+// reached after APPROVED.
 enum ApplicationStatus {
-  SUBMITTED
-  IN_REVIEW
-  APPROVED
-  REJECTED
+  SUBMITTED           // 1. Permohonan Dihantar
+  DOCUMENTS_RECEIVED  // 2. Dokumen Diterima
+  APPLICANT_REVIEW    // 3. Maklumat Permohonan Dalam Semakan
+  DOCUMENTS_REVIEW    // 4. Dokumen Sokongan Dalam Semakan
+  PENDING_APPROVAL    // 5. Dalam Proses Kelulusan
+  APPROVED            // 6a. Permohonan Diluluskan
+  REJECTED            // 6b. Permohonan Ditolak
+  DISBURSED           // 7. Bantuan Diagihkan
 }
 
 model User {
@@ -29,14 +37,33 @@ model User {
   passwordHash String
   role         Role     @default(CITIZEN)
   applications Application[]
+  // Only set for PEGAWAI accounts: the single ADUN whose applications this
+  // officer may review. idNumber (login username) is set to match the
+  // ADUN's name when this is assigned.
+  adunId       String?
+  adun         Adun?    @relation(fields: [adunId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([adunId])
 }
 
 model Adun {
   id           String        @id @default(cuid())
   name         String        @unique
   applications Application[]
+  pegawaiUsers User[]
+  budget       AdunBudget?
+}
+
+// Allocation tracked per ADUN so a WAKIL_ADUN account can see peruntukan
+// (allocated) vs. digunakan (spent on disbursed applications) vs. baki.
+model AdunBudget {
+  id              String   @id @default(cuid())
+  adunId          String   @unique
+  adun            Adun     @relation(fields: [adunId], references: [id])
+  allocatedAmount Float    @default(0)
+  updatedAt       DateTime @updatedAt
 }
 
 model AidType {
@@ -55,6 +82,7 @@ model Application {
   applicant         User               @relation(fields: [applicantId], references: [id])
   adunId            String
   adun              Adun               @relation(fields: [adunId], references: [id])
+  gender            String
   occupation        String
   incomeRange       String
   maritalStatus     String
@@ -118,4 +146,12 @@ model ContactMessage {
   phone     String
   comment   String
   createdAt DateTime @default(now())
+}
+
+// Singleton row (fixed id) holding the contact details shown on the public
+// Hubungi Kami page, editable by an admin.
+model SiteSettings {
+  id    String @id @default("singleton")
+  email String @default("")
+  phone String @default("")
 }

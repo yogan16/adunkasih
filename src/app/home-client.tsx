@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Megaphone, X } from "lucide-react";
 import { LegacyHeader } from "@/components/legacy-header";
 import { LegacyFooter } from "@/components/legacy-footer";
 import styles from "./home.module.css";
@@ -14,7 +15,7 @@ type Announcement = {
 };
 
 export function HomeClient({ announcements }: { announcements: Announcement[] }) {
-  const [modalText, setModalText] = useState<string | null>(null);
+  const [activeAnnouncement, setActiveAnnouncement] = useState<Announcement | null>(null);
 
   return (
     <div className={styles.page}>
@@ -43,8 +44,8 @@ export function HomeClient({ announcements }: { announcements: Announcement[] })
                   {a.text.length > MAX_LENGTH ? (
                     <>
                       {a.text.slice(0, MAX_LENGTH)}...{" "}
-                      <span className={styles.seeAllLink} onClick={() => setModalText(a.text)}>
-                        See all
+                      <span className={styles.seeAllLink} onClick={() => setActiveAnnouncement(a)}>
+                        Lihat selanjutnya
                       </span>
                     </>
                   ) : (
@@ -58,21 +59,26 @@ export function HomeClient({ announcements }: { announcements: Announcement[] })
         </div>
       </main>
 
-      {modalText && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
+      {activeAnnouncement && (
+        <div className={styles.modal} onClick={() => setActiveAnnouncement(null)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className={styles.closeModal}
-              onClick={() => setModalText(null)}
+              onClick={() => setActiveAnnouncement(null)}
               aria-label="Tutup"
             >
-              &times;
+              <X size={18} />
             </button>
-            <div className={styles.modalHeader}>
-              <img src="/images/announce.png" alt="Announcement Icon" className={styles.modalAnnouncementIcon} />
+            <div className={styles.modalIconWrap}>
+              <Megaphone size={24} />
             </div>
-            <div className={styles.fullAnnouncementText}>{modalText}</div>
+            <h3 className={styles.modalTitle}>Pengumuman</h3>
+            <p className={styles.fullAnnouncementText}>{activeAnnouncement.text}</p>
+            <p className={styles.modalDate}>{activeAnnouncement.date}</p>
+            <button type="button" className={styles.modalOkBtn} onClick={() => setActiveAnnouncement(null)}>
+              Tutup
+            </button>
           </div>
         </div>
       )}

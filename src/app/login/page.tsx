@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LegacyHeader } from "@/components/legacy-header";
 import { LegacyFooter } from "@/components/legacy-footer";
+import { PasswordInput } from "@/components/password-input";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
   const [idNumber, setIdNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -63,29 +63,18 @@ export default function LoginPage() {
               />
 
               <label htmlFor="password">Kata Laluan</label>
-              <input
-                type={showPassword ? "text" : "password"}
+              <PasswordInput
                 id="password"
                 placeholder="Masukkan Kata Laluan"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={setPassword}
                 autoComplete="current-password"
                 required
               />
 
-              <div className={styles.showHideContainer}>
-                <input
-                  type="checkbox"
-                  id="showHidePassword"
-                  checked={showPassword}
-                  onChange={(e) => setShowPassword(e.target.checked)}
-                />
-                <label htmlFor="showHidePassword">Tunjuk/Sembunyi</label>
-              </div>
-
               {error && <p className={styles.errorText}>{error}</p>}
 
-              <button type="submit" disabled={loading}>
+              <button type="submit" className={styles.submitBtn} disabled={loading}>
                 {loading ? "SEDANG LOG MASUK..." : "LOG MASUK"}
               </button>
               <p>

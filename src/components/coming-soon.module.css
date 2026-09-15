@@ -1,0 +1,63 @@
+.page {
+  font-family: var(--font-fredoka), sans-serif;
+  background: url("/images/kedah.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+}
+.page::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+.mainWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 16px 64px;
+  box-sizing: border-box;
+}
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 40px 32px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #bc0a0f;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.backLink {
+  display: inline-block;
+  background: #bc0a0f;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.backLink:hover {
+  background: #96080c;
+}

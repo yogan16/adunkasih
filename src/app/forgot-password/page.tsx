@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LegacyHeader } from "@/components/legacy-header";
 import { LegacyFooter } from "@/components/legacy-footer";
+import { PasswordInput } from "@/components/password-input";
 import styles from "./forgot-password.module.css";
 
 export default function ForgotPasswordPage() {
@@ -73,19 +74,19 @@ export default function ForgotPasswordPage() {
               />
 
               <label htmlFor="newPassword">Kata Laluan Baru</label>
-              <input
-                type="password"
+              <PasswordInput
                 id="newPassword"
                 placeholder="Masukkan Kata Laluan Baru"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={setNewPassword}
+                autoComplete="new-password"
                 required
               />
 
               {error && <p className={styles.errorText}>{error}</p>}
               {success && <p className={styles.successText}>Kata laluan telah ditetapkan semula!</p>}
 
-              <button type="submit" disabled={loading}>
+              <button type="submit" className={styles.submitBtn} disabled={loading}>
                 {loading ? "SEDANG PROSES..." : "RESET KATA LALUAN"}
               </button>
               <p>
