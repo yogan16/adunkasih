@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  CITIZEN
+  PEGAWAI
+  ADMIN
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  fullname     String
+  idNumber     String   @unique
+  phone        String
+  passwordHash String
+  role         Role     @default(CITIZEN)
+  applications Application[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Adun {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  applications Application[]
+}
+
+model AidType {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  conditions   String
+  eligibleAge  Int
+  amount       Float
+  description  String
+  applications Application[]
+}
+
+model Application {
+  id                String             @id @default(cuid())
+  applicantId       String
+  applicant         User               @relation(fields: [applicantId], references: [id])
+  adunId            String
+  adun              Adun               @relation(fields: [adunId], references: [id])
+  occupation        String
+  incomeRange       String
+  maritalStatus     String
+  address           String
+  postcode          String
+  city              String
+  aidTypeId         String
+  aidType           AidType            @relation(fields: [aidTypeId], references: [id])
+  otherAidDetail    String?
+  description       String
+  status            ApplicationStatus  @default(SUBMITTED)
+  statusHistory     StatusChange[]
+  dependents        Dependent[]
+  documents         Document[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([applicantId])
+  @@index([status])
+}
+
+model StatusChange {
+  id            String            @id @default(cuid())
+  applicationId String
+  application   Application       @relation(fields: [applicationId], references: [id])
+  status        ApplicationStatus
+  note          String?
+  changedBy     String
+  changedAt     DateTime          @default(now())
+
+  @@index([applicationId])
+}
+
+model Dependent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id])
+  name          String
+  icNumber      String?
+  relationship  String
+  income        Float       @default(0)
+}
+
+model Document {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id])
+  kind          String
+  url           String
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  comment   String
+  createdAt DateTime @default(now())
+}

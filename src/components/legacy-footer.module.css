@@ -1,0 +1,26 @@
+.footer {
+  color: white;
+  text-align: center;
+  width: 100%;
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 14px;
+}
+.fixedBlack {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: black;
+  padding: 10px 0;
+}
+.fixedTranslucent {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 0;
+}
+.staticBlack {
+  background: black;
+  padding: 15px 0;
+  margin-top: 20px;
+}

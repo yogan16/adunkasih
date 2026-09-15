@@ -1,0 +1,146 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: black;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  font-family: var(--font-fredoka), sans-serif;
+  transition: background-color 0.2s ease;
+}
+.headerTransparent {
+  background: transparent;
+}
+/*
+ * The translucent/blurred look is applied via ::before instead of directly
+ * on .header, because backdrop-filter on an element makes it a containing
+ * block for its position:fixed descendants (per spec) — and the mobile
+ * nav overlay below is `position: fixed` *inside* this header. Putting
+ * backdrop-filter here would confine that fixed overlay to the header's
+ * own (small) box instead of the full viewport.
+ */
+.headerTransparent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+  z-index: -1;
+}
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  z-index: 1100;
+}
+.logoLink img {
+  height: 38px;
+  width: 38px;
+  object-fit: contain;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.5px;
+}
+.menuToggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: white;
+  cursor: pointer;
+  background: none;
+  border: none;
+  z-index: 1100;
+}
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.navLinks a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.navLinks a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+.loginBtn {
+  background: #bc0a0f;
+  color: white !important;
+  padding: 8px 18px !important;
+  border-radius: 999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+.loginBtn::before {
+  content: "";
+  display: inline-block;
+  background: url("/images/icon.png") no-repeat center center;
+  background-size: contain;
+  width: 18px;
+  height: 18px;
+  margin-right: 7px;
+}
+.navLinks .loginBtn:hover {
+  background: #96080c;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .menuToggle {
+    display: flex;
+  }
+  .navLinks {
+    position: fixed;
+    inset: 0;
+    margin-left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10, 10, 10, 0.98);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    z-index: 1050;
+  }
+  .navLinksActive {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .navLinks a {
+    width: auto;
+    font-size: 20px;
+    padding: 14px 28px;
+  }
+  .navLinks a:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .loginBtn {
+    margin-left: 0;
+    margin-top: 12px;
+    padding: 12px 32px !important;
+    font-size: 18px;
+  }
+}
