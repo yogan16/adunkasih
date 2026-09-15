@@ -9,6 +9,14 @@ A full-stack welfare-assistance management portal for Kedah state (Malaysia). Ci
 - **Auth:** [Auth.js](https://authjs.dev/) (NextAuth v5) with credentials login, passwords hashed via bcrypt
 - **Validation:** [Zod](https://zod.dev/)
 - **Styling:** CSS Modules (faithfully ports the original Kedah state branding/design)
+- **Icons:** [lucide-react](https://lucide.dev/)
+
+## Roles
+
+- **Citizen** — registers, submits aid applications, tracks status, edits profile
+- **Pegawai** — reviews applications for their assigned ADUN through a multi-stage pipeline, flags applicants with prior disbursements, exports CSV reports
+- **Wakil ADUN** — read-only oversight of applications and budget usage (peruntukan/digunakan/baki) for their ADUN
+- **Admin** — manages users (all roles), aid types, announcements, per-ADUN budget allocation, contact feedback, and public site contact details
 
 ## Getting Started
 
@@ -16,7 +24,7 @@ A full-stack welfare-assistance management portal for Kedah state (Malaysia). Ci
    ```bash
    npm install
    ```
-2. Copy `.env.example` to `.env` and fill in a PostgreSQL connection string plus an `AUTH_SECRET` (generate one with `npx auth secret`).
+2. Copy `.env.example` to `.env` and fill in `DATABASE_URL` (pooled connection), `DIRECT_URL` (direct connection, used for migrations), and `AUTH_SECRET` (generate one with `npx auth secret`).
 3. Run migrations:
    ```bash
    npx prisma migrate dev
